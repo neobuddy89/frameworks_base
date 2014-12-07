@@ -729,6 +729,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_POWER_LONG_PRESS_FOR_HARDWARE_RESET = 110;
     private static final int TIME_FOR_SCREEN_OFF_BEFORE_HARDWARE_RESET = 7300;
 
+    private boolean mHasPermanentMenuKey;
+
     private class PolicyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -830,11 +832,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 case HardkeyActionHandler.MSG_FIRE_HOME:
                     launchHomeFromHotKey(DEFAULT_DISPLAY);
                     break;
-//                case HardkeyActionHandler.MSG_UPDATE_MENU_KEY:
-//                    synchronized (mLock) {
-//                        mHasPermanentMenuKey = msg.arg1 == 1;
-//                    }
-//                    break;
+                case HardkeyActionHandler.MSG_UPDATE_MENU_KEY:
+                    synchronized (mLock) {
+                        mHasPermanentMenuKey = msg.arg1 == 1;
+                    }
+                    break;
                 case HardkeyActionHandler.MSG_DO_HAPTIC_FB:
                     performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, false, "Hardkey Long-Press");
                     break;
@@ -5858,6 +5860,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mHandler.post(mScreenshotRunnable);
     }
 
+    @Override
+    public boolean hasPermanentMenuKey() {
+        return !hasNavigationBar() && mHasPermanentMenuKey;
+    }
+
+    @Override
     public void setDismissImeOnBackKeyPressed(boolean newValue) {
         mDismissImeOnBackKeyPressed = newValue;
     }
