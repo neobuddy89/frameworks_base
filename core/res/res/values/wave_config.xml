@@ -69,4 +69,7 @@
     <!-- Whether device has fingerprint on power button -->
     <bool name="config_powerButtonFingerprint">false</bool>
 
+    <!-- Whether device has dash charging support -->
+    <bool name="config_hasDashCharger">false</bool>
+
 </resources>
