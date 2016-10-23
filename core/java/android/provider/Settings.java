@@ -4823,6 +4823,15 @@ public final class Settings {
         public static final String MULTI_AUDIO_FOCUS_ENABLED = "multi_audio_focus_enabled";
 
         /**
+        * Whether allowing pocket service to register sensors and dispatch informations.
+        *   0 = disabled
+        *   1 = enabled
+        * @author Carlo Savignano
+        * @hide
+        */
+        public static final String POCKET_JUDGE = "pocket_judge";
+
+        /**
          * Enable statusbar double tap gesture on to put device to sleep
          * @hide
          */
