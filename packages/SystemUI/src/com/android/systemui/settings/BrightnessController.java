@@ -285,6 +285,7 @@ public class BrightnessController implements ToggleSlider.Listener {
         mSliderMax = GAMMA_SPACE_MAX;
         mControl = control;
         mControl.setMax(GAMMA_SPACE_MAX);
+        Dependency.initDependencies(context.getApplicationContext());
         mBackgroundHandler = new Handler((Looper) Dependency.get(Dependency.BG_LOOPER));
         mUserTracker = new CurrentUserTracker(mContext) {
             @Override
