@@ -1328,6 +1328,11 @@ public interface WindowManagerPolicy extends WindowManagerPolicyConstants {
     public void takeCustomScreenshot(boolean partial);
 
     /**
+     * Send some ActionHandler commands to WindowManager.
+     */
+    public void sendCustomAction(Intent intent);
+
+    /**
      * Lock the device now.
      */
     public void lockNow(Bundle options);
