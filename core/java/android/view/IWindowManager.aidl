@@ -388,6 +388,11 @@ interface IWindowManager
     oneway void hideTransientBars(int displayId);
 
     /**
+     * Takes a fullscreen or partial screenshot.
+     */
+    void takeCustomScreenshot(boolean partial);
+
+    /**
      * Called by System UI to notify of changes to the visibility of Recents.
      */
     oneway void setRecentsVisibility(boolean visible);
