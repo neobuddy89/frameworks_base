@@ -154,6 +154,11 @@ interface IStatusBarService
     void showInDisplayFingerprintView();
     void hideInDisplayFingerprintView();
 
+    void toggleRecentApps();
+    void toggleSplitScreen();
+    void preloadRecentApps();
+    void cancelPreloadRecentApps();
+
     /**
      * Used to block or unblock usage of gestural navigation
      */
