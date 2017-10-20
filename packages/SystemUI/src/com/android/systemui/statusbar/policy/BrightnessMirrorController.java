@@ -16,6 +16,7 @@
 
 package com.android.systemui.statusbar.policy;
 
+import android.content.Context;
 import android.annotation.NonNull;
 import android.content.res.Resources;
 import android.util.ArraySet;
@@ -43,11 +44,14 @@ public class BrightnessMirrorController
     private final ArraySet<BrightnessMirrorListener> mBrightnessMirrorListeners = new ArraySet<>();
     private final int[] mInt2Cache = new int[2];
     private View mBrightnessMirror;
+    private Context mContext;
 
-    public BrightnessMirrorController(StatusBarWindowView statusBarWindow,
+    public BrightnessMirrorController(Context context, StatusBarWindowView statusBarWindow,
             @NonNull Consumer<Boolean> visibilityCallback) {
+        mContext = context;
         mStatusBarWindow = statusBarWindow;
         mBrightnessMirror = statusBarWindow.findViewById(R.id.brightness_mirror);
+        setPadding();
         mNotificationPanel = statusBarWindow.findViewById(R.id.notification_panel);
         mNotificationPanel.setPanelAlphaEndAction(() -> {
             mBrightnessMirror.setVisibility(View.INVISIBLE);
@@ -111,6 +115,7 @@ public class BrightnessMirrorController
         mStatusBarWindow.removeView(mBrightnessMirror);
         mBrightnessMirror = LayoutInflater.from(qsThemeContext).inflate(
                 R.layout.brightness_mirror, mStatusBarWindow, false);
+        setPadding();
         mStatusBarWindow.addView(mBrightnessMirror, index);
 
         for (int i = 0; i < mBrightnessMirrorListeners.size(); i++) {
@@ -131,5 +136,11 @@ public class BrightnessMirrorController
 
     public interface BrightnessMirrorListener {
         void onBrightnessMirrorReinflated(View brightnessMirror);
+    }
+
+    private void setPadding(){
+        mBrightnessMirror.setPadding(mBrightnessMirror.getPaddingLeft(),
+        mBrightnessMirror.getPaddingTop(), mBrightnessMirror.getPaddingRight(),
+        mContext.getResources().getDimensionPixelSize(R.dimen.qs_brightness_footer_padding));
     }
 }
