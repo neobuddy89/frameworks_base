@@ -97,4 +97,7 @@
     <string name="hp_buddy_center">Both</string>
     <string name="hp_buddy_not_connected">Connect your headphones</string>
 
+    <!-- Name of the VPN status bar icon. -->
+    <string name="status_bar_vpn">VPN</string>
+
 </resources>
