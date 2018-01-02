@@ -300,6 +300,13 @@ public class StatusBar extends SystemUI implements DemoMode,
         "com.android.systemui.qstheme.dark",
     };
 
+    // Black themes
+    private static final String[] BLACK_THEMES = {
+        "com.android.system.theme.black",
+        "com.android.settings.theme.black",
+        "com.android.systemui.theme.black",
+    };
+
     // additional instrumentation for testing purposes; intended to be left on during development
     public static final boolean CHATTY = DEBUG;
 
@@ -2211,6 +2218,17 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
     }
 
+    public boolean isUsingBlackTheme() {
+        OverlayInfo themeInfo = null;
+        try {
+            themeInfo = mOverlayManager.getOverlayInfo(BLACK_THEMES[0],
+                    mLockscreenUserManager.getCurrentUserId());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return themeInfo != null && themeInfo.isEnabled();
+    }
+
     @Nullable
     public View getAmbientIndicationContainer() {
         return mAmbientIndicationContainer;
@@ -4005,7 +4023,8 @@ public class StatusBar extends SystemUI implements DemoMode,
         final boolean inflated = mStackScroller != null && mStatusBarWindowManager != null;
 
         int userThemeSetting = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.SYSTEM_THEME_STYLE, 0, mCurrentUserId);
+                Settings.System.SYSTEM_THEME_STYLE, 0, mLockscreenUserManager.getCurrentUserId());
+        boolean useBlackTheme = false;
         boolean useDarkTheme = false;
         if (userThemeSetting == 0) {
             // The system wallpaper defines if QS should be light or dark.
@@ -4015,6 +4034,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                     && (systemColors.getColorHints() & WallpaperColors.HINT_SUPPORTS_DARK_THEME) != 0;
         } else {
             useDarkTheme = userThemeSetting == 2;
+            useBlackTheme = userThemeSetting == 3;
         }
         if (isUsingDarkTheme() != useDarkTheme) {
             for (String theme : DARK_THEMES) {
@@ -4024,6 +4044,16 @@ public class StatusBar extends SystemUI implements DemoMode,
                     if (useDarkTheme) {
                            unloadStockDarkTheme();
                     }
+                } catch (RemoteException e) {
+                    Log.w(TAG, "Can't change theme", e);
+                }
+            }
+        }
+        if (isUsingBlackTheme() != useBlackTheme) {
+            for (String theme : BLACK_THEMES) {
+                try {
+                    mOverlayManager.setEnabled(theme,
+                            useBlackTheme, mLockscreenUserManager.getCurrentUserId());
                 } catch (RemoteException e) {
                     Log.w(TAG, "Can't change theme", e);
                 }
