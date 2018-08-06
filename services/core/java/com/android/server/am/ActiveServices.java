@@ -3298,6 +3298,10 @@ public final class ActiveServices {
                 sr.isolatedProc = null;
                 mPendingServices.remove(i);
                 i--;
+                if (proc.persistent && !proc.isolated) {
+                    mRestartingServices.add(sr);
+                    continue;
+                }
                 bringDownServiceLocked(sr);
             }
         }
