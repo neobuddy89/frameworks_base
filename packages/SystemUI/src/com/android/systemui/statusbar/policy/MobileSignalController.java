@@ -410,7 +410,11 @@ public class MobileSignalController extends SignalController<
         int voiceNetTye = getVoiceNetworkType();
 
         if (  mCurrentState.showHD && mVoLTEicon ) {
-            resId = R.drawable.ic_volte;
+            if (mConfig.showHDVolteIcon) {
+                resId = R.drawable.ic_hd_volte;
+            } else {
+                resId = R.drawable.ic_volte;
+            }
         }
         return resId;
     }

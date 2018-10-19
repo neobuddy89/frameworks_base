@@ -1063,6 +1063,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         boolean readIconsFromXml;
         boolean showRsrpSignalLevelforLTE;
         boolean showVolteIcon;
+        boolean showHDVolteIcon;
 
         static Config readConfig(Context context) {
             Config config = new Config();
@@ -1088,6 +1089,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
             config.showRsrpSignalLevelforLTE =
                     res.getBoolean(R.bool.config_showRsrpSignalLevelforLTE);
             config.showVolteIcon = res.getBoolean(R.bool.config_display_volte);
+            config.showHDVolteIcon = res.getBoolean(R.bool.config_display_hd_volte);
             return config;
         }
     }
