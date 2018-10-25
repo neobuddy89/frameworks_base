@@ -92,7 +92,7 @@ public class RenderNodeAnimator extends Animator {
     private static final int STATE_FINISHED = 3;
     private int mState = STATE_PREPARE;
 
-    private long mUnscaledDuration = 300;
+    private long mUnscaledDuration = 150;
     private long mUnscaledStartDelay = 0;
     // If this is true, we will run any start delays on the UI thread. This is
     // the safe default, and is necessary to ensure start listeners fire at
