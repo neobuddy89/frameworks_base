@@ -108,6 +108,7 @@ import com.android.systemui.statusbar.phone.ExpandableIndicator;
 import com.android.systemui.statusbar.policy.AccessibilityManagerWrapper;
 import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
+import com.android.systemui.util.NotificationChannels;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -184,6 +185,9 @@ public class VolumeDialogImpl implements VolumeDialog,
 
     private boolean mExpanded;
 
+    // Volume panel placement left or right
+    private boolean mVolumePanelOnLeft;
+
     public VolumeDialogImpl(Context context) {
         mContext =
                 new ContextThemeWrapper(context, R.style.qs_theme);
@@ -196,6 +200,7 @@ public class VolumeDialogImpl implements VolumeDialog,
         mShowActiveStreamOnly = showActiveStreamOnly();
         mHasSeenODICaptionsTooltip =
                 Prefs.getBoolean(context, Prefs.Key.HAS_SEEN_ODI_CAPTIONS_TOOLTIP, false);
+        mVolumePanelOnLeft = mContext.getResources().getBoolean(R.bool.config_audioPanelOnLeftSide);
     }
 
     @Override
@@ -224,7 +229,7 @@ public class VolumeDialogImpl implements VolumeDialog,
     private void initDialog() {
 
         // Gravitate various views left/right depending on panel placement setting.
-        final int panelGravity = Gravity.RIGHT;
+        final int panelGravity = mVolumePanelOnLeft ? Gravity.LEFT : Gravity.RIGHT;
 
         mConfigurableTexts = new ConfigurableTexts(mContext);
         mHovering = false;
@@ -258,7 +263,8 @@ public class VolumeDialogImpl implements VolumeDialog,
 
         mDialogView = mDialog.findViewById(R.id.volume_dialog);
         mDialogView.setAlpha(0);
-        mDialogView.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        mDialogView.setLayoutDirection(mVolumePanelOnLeft ?
+                View.LAYOUT_DIRECTION_LTR : View.LAYOUT_DIRECTION_RTL);
 
         mDialogView.setOnHoverListener((v, event) -> {
             int action = event.getActionMasked();
@@ -309,7 +315,7 @@ public class VolumeDialogImpl implements VolumeDialog,
         mExpandRows = mDialog.findViewById(R.id.expandable_indicator);
         if (mExpandRows != null) {
             setLayoutGravity(mExpandRows.getLayoutParams(), panelGravity);
-            mExpandRows.setRotation(90);
+            mExpandRows.setRotation(mVolumePanelOnLeft ? -90 : 90);
         }
 
         if (mRows.isEmpty()) {
@@ -359,6 +365,11 @@ public class VolumeDialogImpl implements VolumeDialog,
         } else if (obj instanceof LinearLayout.LayoutParams) {
             ((LinearLayout.LayoutParams) obj).gravity = gravity;
         }
+    }
+
+    private float getAnimatorX() {
+        final float x = mDialogView.getWidth() / 2.0f;
+        return mVolumePanelOnLeft ? -x : x;
     }
 
     protected ViewGroup getDialogView() {
@@ -928,7 +939,7 @@ public class VolumeDialogImpl implements VolumeDialog,
                     tryToRemoveCaptionsTooltip();
                     mController.notifyVisible(false);
                 }, 50));
-        if (!isLandscape()) animator.translationX(mDialogView.getWidth() / 2.0f);
+        if (!isLandscape() || !mShowActiveStreamOnly) animator.translationX(getAnimatorX());
         animator.start();
         checkODICaptionsTooltip(true);
         synchronized (mSafetyWarningLock) {
