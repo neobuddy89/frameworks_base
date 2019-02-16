@@ -298,6 +298,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         "com.android.systemui.theme.dark",
         "com.android.settings.theme.dark",
         "com.android.systemui.qstheme.dark",
+        "com.android.settings.intelligence.theme.dark",
     };
 
     // Black themes
@@ -305,6 +306,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         "com.android.system.theme.black",
         "com.android.settings.theme.black",
         "com.android.systemui.theme.black",
+        "com.android.settings.intelligence.theme.black",
     };
 
     // additional instrumentation for testing purposes; intended to be left on during development
