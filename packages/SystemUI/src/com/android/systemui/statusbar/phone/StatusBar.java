@@ -126,6 +126,9 @@ import android.view.WindowManager;
 import android.view.WindowManagerGlobal;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.DateTimeView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -450,6 +453,10 @@ public class StatusBar extends SystemUI implements DemoMode,
     // for disabling the status bar
     private int mDisabled1 = 0;
     private int mDisabled2 = 0;
+
+    // Statusbar clear all button
+    private View mDismissAllButton;
+    private boolean mDismissShow = false;
 
     // tracking calls to View.setSystemUiVisibility()
     private int mSystemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE;
@@ -1247,7 +1254,6 @@ public class StatusBar extends SystemUI implements DemoMode,
         if (mStackScroller == null) {
             return;
         }
-
         mFooterView = (FooterView) LayoutInflater.from(mContext).inflate(
                 R.layout.status_bar_notification_footer, mStackScroller, false);
         mFooterView.setDismissButtonClickListener(v -> {
@@ -1258,6 +1264,11 @@ public class StatusBar extends SystemUI implements DemoMode,
             manageNotifications();
         });
         mStackScroller.setFooterView(mFooterView);
+        mDismissAllButton = mStatusBarWindow.findViewById(R.id.clear_notifications);
+        mDismissAllButton.setOnClickListener(v -> {
+            mMetricsLogger.action(MetricsEvent.ACTION_DISMISS_ALL_NOTES);
+            clearAllNotifications();
+        });
     }
 
     protected void createUserSwitcher() {
@@ -1535,13 +1546,44 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     @VisibleForTesting
     protected void updateFooter() {
-        boolean showDismissView = mClearAllEnabled && hasActiveClearableNotifications();
-        boolean showFooterView = (showDismissView ||
-                        mEntryManager.getNotificationData().getActiveNotifications().size() != 0)
-                && mState != StatusBarState.KEYGUARD
-                && !mRemoteInputManager.getController().isRemoteInputActive();
+        boolean showDismissView = mClearAllEnabled && hasActiveClearableNotifications() && mNotificationPanel.isFullyExpanded();
+        boolean showFooterView = ((!showDismissView && mEntryManager.getNotificationData().getActiveNotifications().size() == 0) || mState == 1 || mRemoteInputManager.getController().isRemoteInputActive()) ? false : true;
+        mStackScroller.updateFooterView(showFooterView, false);
+        if (showDismissView) {
+            showDismissAnimate(true);
+            return;
+        }
+        hideDismissAnimate(true);
+    }
 
-        mStackScroller.updateFooterView(showFooterView, showDismissView);
+    public void showDismissAnimate(boolean animate) {
+        if (getBarState() != 1 && !mNotificationPanel.isQsExpanded()) {
+            if (!mDismissShow) {
+                mDismissShow = true;
+                Animation a = AnimationUtils.loadAnimation(mContext, R.anim.dismiss_all_show);
+                mDismissAllButton.setVisibility(View.VISIBLE);
+                mDismissAllButton.startAnimation(a);
+            }
+        }
+    }
+
+    public void hideDismissAnimate(boolean animate) {
+        if (mDismissShow) {
+            mDismissShow = false;
+            Animation a = AnimationUtils.loadAnimation(mContext, R.anim.dismiss_all_hide);
+            a.setAnimationListener(new AnimationListener() {
+                public void onAnimationStart(Animation animation) {
+                }
+
+                public void onAnimationEnd(Animation animation) {
+                    mDismissAllButton.setVisibility(View.GONE);
+                }
+
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            mDismissAllButton.startAnimation(a);
+        }
     }
 
     /**
@@ -1950,6 +1992,11 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     public void setQsExpanded(boolean expanded) {
+        if (expanded) {
+            hideDismissAnimate(true);
+        } else if (hasActiveClearableNotifications()) {
+            showDismissAnimate(true);
+        }
         mStatusBarWindowManager.setQsExpanded(expanded);
         mNotificationPanel.setStatusAccessibilityImportance(expanded
                 ? View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
@@ -4170,6 +4217,9 @@ public class StatusBar extends SystemUI implements DemoMode,
         updateTheme();
         touchAutoDim();
         mNotificationShelf.setStatusBarState(state);
+        if (mState == 1) {
+            hideDismissAnimate(true);
+        }
     }
 
     @Override
