@@ -55,6 +55,7 @@ import com.android.systemui.util.Utils.DisableStateTracker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 // Intimately tied to the design of res/layout/signal_cluster_view.xml
 public class SignalClusterView extends LinearLayout implements NetworkControllerImpl.SignalCallback,
@@ -72,7 +73,9 @@ public class SignalClusterView extends LinearLayout implements NetworkController
     private final NetworkController mNetworkController;
     private final SecurityController mSecurityController;
 
+    private boolean mNoSimsVisible = false;
     private boolean mVpnVisible = false;
+    private boolean mSimDetected;
     private int mVpnIconId = 0;
     private int mLastVpnIconId = -1;
     private boolean mEthernetVisible = false;
@@ -83,6 +86,7 @@ public class SignalClusterView extends LinearLayout implements NetworkController
     private int mLastWifiStrengthId = -1;
     private boolean mWifiIn;
     private boolean mWifiOut;
+    private int mLastWifiActivityId = -1;
     private boolean mIsAirplaneMode = false;
     private int mAirplaneIconId = 0;
     private int mLastAirplaneIconId = -1;
@@ -96,7 +100,8 @@ public class SignalClusterView extends LinearLayout implements NetworkController
     private int mNoSimsIcon;
 
     ViewGroup mEthernetGroup, mWifiGroup;
-    ImageView mVpn, mEthernet, mWifi, mAirplane, mEthernetDark, mWifiDark;
+    View mNoSimsCombo;
+    ImageView mVpn, mEthernet, mWifi, mAirplane, mNoSims, mEthernetDark, mWifiDark, mNoSimsDark;
     ImageView mWifiActivityIn;
     ImageView mWifiActivityOut;
     View mWifiAirplaneSpacer;
@@ -200,6 +205,9 @@ public class SignalClusterView extends LinearLayout implements NetworkController
         mWifiActivityIn = findViewById(R.id.wifi_in);
         mWifiActivityOut= findViewById(R.id.wifi_out);
         mAirplane       = findViewById(R.id.airplane);
+        mNoSims         = findViewById(R.id.no_sims);
+        mNoSimsDark     = findViewById(R.id.no_sims_dark);
+        mNoSimsCombo    =             findViewById(R.id.no_sims_combo);
         mWifiAirplaneSpacer =         findViewById(R.id.wifi_airplane_spacer);
         mWifiSignalSpacer =           findViewById(R.id.wifi_signal_spacer);
         mMobileSignalGroup =          findViewById(R.id.mobile_signal_group);
@@ -218,6 +226,11 @@ public class SignalClusterView extends LinearLayout implements NetworkController
         }
 
         mVpn.setImageDrawable(new ScalingDrawableWrapper(mVpn.getDrawable(), mIconScaleFactor));
+
+        mNoSims.setImageDrawable(
+                new ScalingDrawableWrapper(mNoSims.getDrawable(), mIconScaleFactor));
+        mNoSimsDark.setImageDrawable(
+                new ScalingDrawableWrapper(mNoSimsDark.getDrawable(), mIconScaleFactor));
     }
 
     @Override
@@ -324,7 +337,9 @@ public class SignalClusterView extends LinearLayout implements NetworkController
 
     @Override
     public void setNoSims(boolean show, boolean simDetected) {
-        // Noop. Status bar no longer shows no sim icon.
+        mNoSimsVisible = show && !mBlockMobile;
+        mSimDetected = simDetected;
+        apply();
     }
 
     @Override
@@ -555,13 +570,38 @@ public class SignalClusterView extends LinearLayout implements NetworkController
             mWifiAirplaneSpacer.setVisibility(View.GONE);
         }
 
-        if ((anyMobileVisible && firstMobileTypeId != 0) && mWifiVisible) {
+        if (((anyMobileVisible && firstMobileTypeId != 0) || mNoSimsVisible) && mWifiVisible) {
             mWifiSignalSpacer.setVisibility(View.VISIBLE);
         } else {
             mWifiSignalSpacer.setVisibility(View.GONE);
         }
 
-        boolean anythingVisible = mWifiVisible || mIsAirplaneMode
+        if (mNoSimsVisible) {
+            mIconLogger.onIconShown(SLOT_MOBILE);
+            mNoSimsCombo.setVisibility(View.VISIBLE);
+            if (!Objects.equals(mSimDetected, mNoSimsCombo.getTag())) {
+                mNoSimsCombo.setTag(mSimDetected);
+                if (mSimDetected) {
+                    SignalDrawable d = new SignalDrawable(mNoSims.getContext());
+                    d.setDarkIntensity(0);
+                    mNoSims.setImageDrawable(d);
+                    mNoSims.setImageLevel(SignalDrawable.getEmptyState(4));
+
+                    SignalDrawable dark = new SignalDrawable(mNoSims.getContext());
+                    dark.setDarkIntensity(1);
+                    mNoSimsDark.setImageDrawable(dark);
+                    mNoSimsDark.setImageLevel(SignalDrawable.getEmptyState(4));
+                } else {
+                    mNoSims.setImageResource(R.drawable.stat_sys_no_sims);
+                    mNoSimsDark.setImageResource(R.drawable.stat_sys_no_sims);
+                }
+            }
+        } else {
+            mIconLogger.onIconHidden(SLOT_MOBILE);
+            mNoSimsCombo.setVisibility(View.GONE);
+        }
+
+        boolean anythingVisible = mNoSimsVisible || mWifiVisible || mIsAirplaneMode
                 || anyMobileVisible || mVpnVisible || mEthernetVisible;
         setPaddingRelative(0, 0, anythingVisible ? mEndPadding : mEndPaddingNothingVisible, 0);
     }
@@ -597,6 +637,9 @@ public class SignalClusterView extends LinearLayout implements NetworkController
     private void applyIconTint() {
         setTint(mVpn, DarkIconDispatcher.getTint(mTintArea, mVpn, mIconTint));
         setTint(mAirplane, DarkIconDispatcher.getTint(mTintArea, mAirplane, mIconTint));
+        applyDarkIntensity(
+                DarkIconDispatcher.getDarkIntensity(mTintArea, mNoSims, mDarkIntensity),
+                mNoSims, mNoSimsDark);
         applyDarkIntensity(
                 DarkIconDispatcher.getDarkIntensity(mTintArea, mWifi, mDarkIntensity),
                 mWifi, mWifiDark);
