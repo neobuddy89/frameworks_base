@@ -616,6 +616,12 @@ java_library {
         "core/java/org/chromium/arc/EventLogTags.logtags",
 
         ":framework-statslog-gen",
+
+        // Long screenshot
+        "core/java/com/android/internal/longshot/ILongScreenshot.aidl",
+        "core/java/com/android/internal/longshot/ILongScreenshotCallback.aidl",
+        "core/java/com/android/internal/longshot/ILongScreenshotListener.aidl",
+        "core/java/com/android/internal/longshot/ILongScreenshotManager.aidl",
     ],
 
     aidl: {
