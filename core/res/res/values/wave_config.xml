@@ -64,4 +64,7 @@
         <item>recovery</item>
         <item>bootloader</item>
     </string-array>
+
+    <!-- Whether device supports internal audio recording -->
+    <bool name="config_hasInternalAudioRecordingSupport">true</bool>
 </resources>
