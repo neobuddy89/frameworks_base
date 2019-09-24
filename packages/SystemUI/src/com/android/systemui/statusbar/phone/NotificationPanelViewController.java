@@ -497,6 +497,8 @@ public class NotificationPanelViewController extends PanelViewController {
 
     private boolean mOneFingerQuickSettingsIntercept;
 
+    private int mStatusBarHeaderHeight;
+
     @Inject
     public NotificationPanelViewController(NotificationPanelView view,
             InjectionInflationController injectionInflationController,
@@ -686,6 +688,8 @@ public class NotificationPanelViewController extends PanelViewController {
                 com.android.internal.R.dimen.status_bar_height);
         mHeadsUpInset = statusbarHeight + mResources.getDimensionPixelSize(
                 R.dimen.heads_up_status_bar_padding);
+        mStatusBarHeaderHeight = mResources.getDimensionPixelSize(
+                R.dimen.status_bar_height);
     }
 
     /**
@@ -3256,6 +3260,15 @@ public class NotificationPanelViewController extends PanelViewController {
 
                 if (mBarState == StatusBarState.KEYGUARD) {
                     mDoubleTapGestureListener.onTouchEvent(event);
+                } else if (!mQsExpanded
+                        && mDoubleTapToSleepEnabled
+                        && event.getY() < mStatusBarHeaderHeight) {
+                    mDoubleTapGestureListener.onTouchEvent(event);
+                    // quick pulldown can trigger those values
+                    // on double tap - so reset them
+                    mQsExpandImmediate = false;
+                    requestPanelHeightUpdate();
+                    setListening(false);
                 }
 
                 // Make sure the next touch won't the blocked after the current ends.
@@ -3896,5 +3909,9 @@ public class NotificationPanelViewController extends PanelViewController {
             updateMaxHeadsUpTranslation();
             return insets;
         }
+    }
+
+    public void updateDoubleTapToSleep(boolean doubleTapToSleepEnabled) {
+        mDoubleTapToSleepEnabled = doubleTapToSleepEnabled;
     }
 }
