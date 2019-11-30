@@ -4856,6 +4856,16 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_BATTERY_INFO = "lockscreen_battery_info";
 
+       /**
+         * Display style of the status bar battery information
+         * 0: Display the battery an icon in portrait mode
+         * 1: Display the battery as a circle
+         * 2: Do not display the battery
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_style";
+
         /**
          * Keys we no longer back up under the current schema, but want to continue to
          * process when restoring historical backup datasets.
