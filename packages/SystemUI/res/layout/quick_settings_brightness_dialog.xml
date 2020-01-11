@@ -23,13 +23,14 @@
     style="@style/BrightnessDialogContainer">
 
     <ImageView
-        android:id="@+id/brightness_level"
+        android:id="@+id/brightness_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_qs_brightness_high"
-        android:contentDescription="@null" />
+        android:src="@drawable/ic_qs_brightness_auto_off"
+        android:contentDescription="@null"
+        android:visibility="gone" />
 
     <com.android.systemui.settings.ToggleSliderView
         android:id="@+id/brightness_slider"
@@ -40,14 +41,5 @@
         android:contentDescription="@string/accessibility_brightness"
         android:importantForAccessibility="no"
         systemui:text="@string/status_bar_settings_auto_brightness_label" />
-
-    <ImageView
-        android:id="@+id/brightness_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_qs_brightness_auto_off"
-        android:contentDescription="@null" />
 
 </LinearLayout>

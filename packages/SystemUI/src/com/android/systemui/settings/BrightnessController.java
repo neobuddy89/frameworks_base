@@ -39,20 +39,18 @@ import android.provider.Settings;
 import android.service.vr.IVrManager;
 import android.service.vr.IVrStateCallbacks;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.systemui.Dependency;
-import com.android.systemui.R;
 
 import java.util.ArrayList;
 
 public class BrightnessController implements ToggleSlider.Listener {
     private static final String TAG = "StatusBar.BrightnessController";
+    private static final boolean SHOW_AUTOMATIC_ICON = false;
 
     private static final int SLIDER_ANIMATION_DURATION = 3000;
 
@@ -72,7 +70,6 @@ public class BrightnessController implements ToggleSlider.Listener {
 
     private final Context mContext;
     private final ImageView mIcon;
-    private final ImageView mLevelIcon;
     private final ToggleSlider mControl;
     private final boolean mAutomaticAvailable;
     private final DisplayManager mDisplayManager;
@@ -92,12 +89,6 @@ public class BrightnessController implements ToggleSlider.Listener {
     private boolean mControlValueInitialized;
 
     private ValueAnimator mSliderAnimator;
-
-    private ImageView mMirrorIcon = null;
-    private ImageView mMirrorLevelIcon = null;
-
-    private int mSliderMax = 0;
-    private int mSliderValue = 0;
 
     public interface BrightnessStateChangeCallback {
         public void onBrightnessLevelChanged();
@@ -273,16 +264,9 @@ public class BrightnessController implements ToggleSlider.Listener {
         }
     };
 
-    public BrightnessController(Context context, ImageView levelIcon, ImageView icon, ToggleSlider control) {
+    public BrightnessController(Context context, ImageView icon, ToggleSlider control) {
         mContext = context;
         mIcon = icon;
-        mLevelIcon = levelIcon;
-        mIcon.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                onClickAutomaticIcon();
-            }
-        });
-        mSliderMax = GAMMA_SPACE_MAX;
         mControl = control;
         mControl.setMax(GAMMA_SPACE_MAX);
         Dependency.initDependencies(context.getApplicationContext());
@@ -438,37 +422,10 @@ public class BrightnessController implements ToggleSlider.Listener {
     }
 
     private void updateIcon(boolean automatic) {
-        updateIconInternal(automatic, mIcon, mLevelIcon);
-        updateIconInternal(automatic, mMirrorIcon, mMirrorLevelIcon);
-    }
-
-    private void updateIconInternal(boolean automatic, ImageView icon, ImageView levelIcon) {
-        if (icon != null) {
-            int i;
-            if (automatic) {
-                i = R.drawable.ic_qs_brightness_auto_on;
-            } else {
-                i = R.drawable.ic_qs_brightness_auto_off;
-            }
-            icon.setImageResource(i);
-        }
-        if (levelIcon == null) {
-            return;
-        }
-        if (mIsVrModeEnabled) {
-            if (mSliderValue <= mMinimumBacklightForVr) {
-                levelIcon.setImageResource(R.drawable.ic_qs_brightness_low);
-            } else if (mSliderValue >= mSliderMax - 1) {
-                levelIcon.setImageResource(R.drawable.ic_qs_brightness_high);
-            } else {
-                levelIcon.setImageResource(R.drawable.ic_qs_brightness_medium);
-            }
-        } else if (mSliderValue <= mMinimumBacklight) {
-            levelIcon.setImageResource(R.drawable.ic_qs_brightness_low);
-        } else if (mSliderValue >= mSliderMax - 1) {
-            levelIcon.setImageResource(R.drawable.ic_qs_brightness_high);
-        } else {
-            levelIcon.setImageResource(R.drawable.ic_qs_brightness_medium);
+        if (mIcon != null) {
+            mIcon.setImageResource(automatic && SHOW_AUTOMATIC_ICON ?
+                    com.android.systemui.R.drawable.ic_qs_brightness_auto_on :
+                    com.android.systemui.R.drawable.ic_qs_brightness_auto_off);
         }
     }
 
@@ -520,18 +477,4 @@ public class BrightnessController implements ToggleSlider.Listener {
         mSliderAnimator.start();
     }
 
-    public void onClickAutomaticIcon() {
-        int i;
-        if (mAutomatic) {
-            i = 0;
-        } else {
-            i = 1;
-        }
-        setMode(i);
-    }
-
-    public void setMirrorView(View mirror) {
-        mMirrorIcon = (ImageView) mirror.findViewById(R.id.brightness_icon);
-        mMirrorLevelIcon = (ImageView) mirror.findViewById(R.id.brightness_level);
-    }
 }

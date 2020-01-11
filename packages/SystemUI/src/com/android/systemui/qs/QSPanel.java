@@ -32,7 +32,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.android.internal.logging.MetricsLogger;
@@ -91,8 +90,6 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
     private BrightnessMirrorController mBrightnessMirrorController;
     private View mDivider;
 
-    private View mBrightnessMirror;
-
     public QSPanel(Context context) {
         this(context, null);
     }
@@ -129,10 +126,9 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
         mFooter = new QSSecurityFooter(this, context);
         addView(mFooter.getView());
 
-        final ImageView level = findViewById(R.id.brightness_level);
-        final ImageView icon = findViewById(R.id.brightness_icon);
-        final ToggleSliderView slider = findViewById(R.id.brightness_slider);
-        mBrightnessController = new BrightnessController(getContext(), level, icon, slider);
+        mBrightnessController = new BrightnessController(getContext(),
+                findViewById(R.id.brightness_icon),
+                findViewById(R.id.brightness_slider));
 
         updateResources();
     }
@@ -323,8 +319,6 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
                     .findViewById(R.id.brightness_slider);
             brightnessSlider.setMirror(mirrorSlider);
             brightnessSlider.setMirrorController(mBrightnessMirrorController);
-            mBrightnessMirror = mBrightnessMirrorController.getMirror();
-            mBrightnessController.setMirrorView(mBrightnessMirror);
         }
     }
 
