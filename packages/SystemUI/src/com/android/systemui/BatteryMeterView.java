@@ -109,7 +109,7 @@ public class BatteryMeterView extends LinearLayout implements
         mContext = context;
 
         setOrientation(LinearLayout.HORIZONTAL);
-        setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
+        setGravity(Gravity.CENTER_VERTICAL | Gravity.END);
 
         TypedArray atts = context.obtainStyledAttributes(attrs, R.styleable.BatteryMeterView,
                 defStyle, 0);
@@ -334,7 +334,7 @@ public class BatteryMeterView extends LinearLayout implements
             final int startPadding = res.getDimensionPixelSize(R.dimen.battery_level_padding_start);
             mBatteryPercentView.setPaddingRelative(
                     getMeterStyle() == BatteryMeterDrawableBase.BATTERY_STYLE_TEXT ? 0 : startPadding,
-                    0, 0, 0);
+                    0, 5, 0);
         }
     }
 
