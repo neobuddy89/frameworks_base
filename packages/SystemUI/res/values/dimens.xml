@@ -590,7 +590,7 @@
     <dimen name="qs_date_time_translation">8dp</dimen>
 
     <!-- Padding before battery level text in status bar, QS, and Keyguard -->
-    <dimen name="battery_level_padding_start">4dp</dimen>
+    <dimen name="battery_level_padding_start">2dp</dimen>
 
     <!-- The top padding of the clear all button -->
     <dimen name="clear_all_padding_top">12dp</dimen>
@@ -649,7 +649,7 @@
     <dimen name="keyguard_indication_margin_bottom_ambient">16dp</dimen>
 
     <!-- The text size for battery level -->
-    <dimen name="battery_level_text_size">12sp</dimen>
+    <dimen name="battery_level_text_size">11sp</dimen>
 
     <!-- TrustDrawable: Minimum inner radius of the breathing animation -->
     <dimen name="trust_circle_inner_radius_visible_min">22dp</dimen>
