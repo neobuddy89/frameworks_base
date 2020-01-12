@@ -4039,27 +4039,36 @@ public class StatusBar extends SystemUI implements DemoMode,
             useBlackTheme = userThemeSetting == 3;
         }
         if (isUsingDarkTheme() != useDarkTheme) {
-            for (String theme : DARK_THEMES) {
-                try {
-                    mOverlayManager.setEnabled(theme,
-                            useDarkTheme, mLockscreenUserManager.getCurrentUserId());
-                    if (useDarkTheme) {
-                           unloadStockDarkTheme();
+            final boolean useDark = useDarkTheme;
+            mUiOffloadThread.submit(() -> {
+                for (String theme : DARK_THEMES) {
+                    try {
+                        mOverlayManager.setEnabled(theme,
+                                useDark, mLockscreenUserManager.getCurrentUserId());
+                        if (useDark) {
+                               unloadStockDarkTheme();
+                        }
+                    } catch (RemoteException e) {
+                        Log.w(TAG, "Can't change theme", e);
                     }
-                } catch (RemoteException e) {
-                    Log.w(TAG, "Can't change theme", e);
                 }
-            }
+            });
         }
         if (isUsingBlackTheme() != useBlackTheme) {
-            for (String theme : BLACK_THEMES) {
-                try {
-                    mOverlayManager.setEnabled(theme,
-                            useBlackTheme, mLockscreenUserManager.getCurrentUserId());
-                } catch (RemoteException e) {
-                    Log.w(TAG, "Can't change theme", e);
+            final boolean useBlack = useBlackTheme;
+            mUiOffloadThread.submit(() -> {
+                for (String theme : BLACK_THEMES) {
+                    try {
+                        mOverlayManager.setEnabled(theme,
+                                useBlack, mLockscreenUserManager.getCurrentUserId());
+                        if (useBlack) {
+                               unloadStockDarkTheme();
+                        }
+                    } catch (RemoteException e) {
+                        Log.w(TAG, "Can't change theme", e);
+                    }
                 }
-            }
+            });
         }
 
         // Lock wallpaper defines the color of the majority of the views, hence we'll use it
@@ -5262,6 +5271,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             super.onChange(selfChange, uri);
+            updateTheme();
         }
 
         public void update() {
