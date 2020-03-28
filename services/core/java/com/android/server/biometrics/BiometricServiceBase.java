@@ -677,7 +677,8 @@ public abstract class BiometricServiceBase extends SystemService
         mKeyguardManager = mContext.getSystemService(KeyguardManager.class);
         mUserManager = UserManager.get(mContext);
         mMetricsLogger = new MetricsLogger();
-        mCleanupUnusedFingerprints = mContext.getResources().getBoolean(
+        mCleanupUnusedFingerprints = statsModality() == BiometricsProtoEnums.MODALITY_FINGERPRINT &&
+                mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_cleanupUnusedFingerprints);
     }
 
