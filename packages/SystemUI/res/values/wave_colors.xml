@@ -17,16 +17,9 @@
 -->
 <resources>
 
-    <!-- Bolt Battery Icon -->
-    <dimen name="status_bar_battery_bolt_icon_height">13.5dp</dimen>
-    <dimen name="status_bar_battery_bolt_icon_width">9.7dp</dimen>
-
     <!-- Clear all notifications button -->
-    <dimen name="dismiss_all_button_elevation">10dp</dimen>
-    <dimen name="dismiss_all_button_height">55dp</dimen>
-    <dimen name="dismiss_all_button_margin_bottom">35dp</dimen>
-    <dimen name="dismiss_all_button_margin_top">30dp</dimen>
-    <dimen name="dismiss_all_button_width">55dp</dimen>
-    <dimen name="dismiss_all_fab_src_size">24dp</dimen>
+    <color name="dismiss_all_background_color">@android:color/white</color>
+    <color name="dismiss_all_background_color_ripple">#a8a8a8</color>
+    <color name="dismiss_all_icon_color">#8a000000</color>
 
 </resources>
