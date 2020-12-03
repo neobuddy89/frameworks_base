@@ -37,4 +37,7 @@
     <string name="qs_data_switch_changed_1">Switch data card to SIM 1.</string>
     <string name="qs_data_switch_changed_2">Switch data card to SIM 2.</string>
 
+    <!-- Reading mode tile -->
+    <string name="quick_settings_reading_mode">Reading mode</string>
+
 </resources>
