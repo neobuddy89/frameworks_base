@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.systemui.R;
+import com.android.systemui.qs.QSPanel;
 import com.android.systemui.statusbar.NotificationShadeDepthController;
 import com.android.systemui.statusbar.phone.NotificationPanelViewController;
 import com.android.systemui.statusbar.phone.NotificationShadeWindowView;
@@ -44,6 +45,7 @@ public class BrightnessMirrorController
     private final ArraySet<BrightnessMirrorListener> mBrightnessMirrorListeners = new ArraySet<>();
     private final int[] mInt2Cache = new int[2];
     private View mBrightnessMirror;
+    private QSPanel mQsPanel;
 
     public BrightnessMirrorController(NotificationShadeWindowView statusBarWindow,
             NotificationPanelViewController notificationPanelViewController,
@@ -92,11 +94,18 @@ public class BrightnessMirrorController
         return mBrightnessMirror;
     }
 
+    public void setQsPanel(QSPanel qsPanel) {
+        mQsPanel = qsPanel;
+    }
+
     public void updateResources() {
         FrameLayout.LayoutParams lp =
                 (FrameLayout.LayoutParams) mBrightnessMirror.getLayoutParams();
         Resources r = mBrightnessMirror.getResources();
         lp.width = r.getDimensionPixelSize(R.dimen.qs_panel_width);
+        if (mQsPanel != null && mQsPanel.shouldUseHorizontalLayout()) {
+            lp.width = (int) (((float) lp.width) / 2.2f);
+        }
         lp.height = r.getDimensionPixelSize(R.dimen.brightness_mirror_height);
         lp.gravity = r.getInteger(R.integer.notification_panel_layout_gravity);
         mBrightnessMirror.setLayoutParams(lp);
