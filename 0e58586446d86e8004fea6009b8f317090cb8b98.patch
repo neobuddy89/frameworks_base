@@ -1,0 +1,52 @@
+From 0e58586446d86e8004fea6009b8f317090cb8b98 Mon Sep 17 00:00:00 2001
+From: SagarMakhar <sagarmakhar@gmail.com>
+Date: Wed, 9 Dec 2020 11:01:50 +0000
+Subject: [PATCH] Fix Vowifi icons not showing in some cases
+
+Signed-off-by: SagarMakhar <sagarmakhar@gmail.com>
+Change-Id: Ifa928b85defa68c15f962b9269538dd4422c6dbf
+Signed-off-by: SagarMakhar <sagarmakhar@gmail.com>
+---
+ .../systemui/statusbar/policy/MobileSignalController.java | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/policy/MobileSignalController.java b/packages/SystemUI/src/com/android/systemui/statusbar/policy/MobileSignalController.java
+index a7319477b1f..39f51c24e17 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/policy/MobileSignalController.java
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/policy/MobileSignalController.java
+@@ -29,6 +29,7 @@
+ import android.os.Looper;
+ import android.provider.Settings;
+ import android.provider.Settings.Global;
++import android.telephony.AccessNetworkConstants;
+ import android.telephony.Annotation;
+ import android.telephony.CdmaEriInformation;
+ import android.telephony.CellSignalStrength;
+@@ -107,6 +108,8 @@
+     private boolean mDataDisabledIcon;
+     private boolean mRoamingIconAllowed;
+ 
++    private int mImsTransportType = 0;
++
+     // TODO: Reduce number of vars passed in, if we have the NetworkController, probably don't
+     // need listener lists anymore.
+     public MobileSignalController(Context context, Config config, boolean hasMobileData,
+@@ -795,7 +798,9 @@ private boolean isCallIdle() {
+ 
+     private boolean isVowifiAvailable() {
+         return mCurrentState.voiceCapable &&  mCurrentState.imsRegistered
+-                && mServiceState.getDataNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN;
++                && ((mServiceState != null && mServiceState.getDataNetworkType()
++                == TelephonyManager.NETWORK_TYPE_IWLAN)
++                || mImsTransportType == AccessNetworkConstants.TRANSPORT_TYPE_WLAN);
+     }
+ 
+     private MobileIconGroup getVowifiIconGroup() {
+@@ -917,6 +922,7 @@ public void onCapabilitiesStatusChanged(MmTelFeature.MmTelCapabilities config) {
+                 public void onRegistered(int imsTransportType) {
+                     Log.d(mTag, "onRegistered imsTransportType=" + imsTransportType);
+                     mCurrentState.imsRegistered = true;
++                    mImsTransportType = imsTransportType;
+                     notifyListenersIfNecessary();
+                 }
+ 

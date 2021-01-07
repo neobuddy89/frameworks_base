@@ -1,0 +1,894 @@
+From 1b1f367294ec30441af03312f0a66f0d9ae2e7ed Mon Sep 17 00:00:00 2001
+From: SagarMakhar <sagarmakhar@gmail.com>
+Date: Mon, 9 Nov 2020 19:18:30 +0000
+Subject: [PATCH] volte edits
+
+Change-Id: I88b37df185f33ccf1c1ee08a17d488d770c1f9b5
+Signed-off-by: SagarMakhar <sagarmakhar@gmail.com>
+---
+ core/res/AndroidManifest.xml                  |   3 +
+ core/res/res/values/config.xml                |   2 +
+ core/res/res/values/symbols.xml               |   1 +
+ .../SystemUI/res/drawable/stat_sys_volte.xml  |  18 +++
+ .../res/drawable/stat_sys_volte_slot1.xml     |  18 +++
+ .../res/drawable/stat_sys_volte_slot12.xml    |  17 ++
+ .../res/drawable/stat_sys_volte_slot2.xml     |  18 +++
+ .../SystemUI/res/layout/status_bar_volte.xml  |  29 ++++
+ .../statusbar/StatusBarVolteView.java         | 148 ++++++++++++++++++
+ .../phone/StatusBarIconController.java        |  31 ++++
+ .../phone/StatusBarIconControllerImpl.java    |  22 +++
+ .../statusbar/phone/StatusBarIconHolder.java  |  24 +++
+ .../phone/StatusBarSignalPolicy.java          |   8 +
+ .../statusbar/policy/CallbackHandler.java     |  13 +-
+ .../policy/MobileSignalController.java        |  13 +-
+ .../statusbar/policy/NetworkController.java   |  10 +-
+ .../policy/NetworkControllerImpl.java         |  74 +++++++++
+ 17 files changed, 442 insertions(+), 7 deletions(-)
+ create mode 100644 packages/SystemUI/res/drawable/stat_sys_volte.xml
+ create mode 100644 packages/SystemUI/res/drawable/stat_sys_volte_slot1.xml
+ create mode 100644 packages/SystemUI/res/drawable/stat_sys_volte_slot12.xml
+ create mode 100644 packages/SystemUI/res/drawable/stat_sys_volte_slot2.xml
+ create mode 100644 packages/SystemUI/res/layout/status_bar_volte.xml
+ create mode 100644 packages/SystemUI/src/com/android/systemui/statusbar/StatusBarVolteView.java
+
+diff --git a/core/res/AndroidManifest.xml b/core/res/AndroidManifest.xml
+index 4e54990172a..e774bfbd086 100644
+--- a/core/res/AndroidManifest.xml
++++ b/core/res/AndroidManifest.xml
+@@ -664,6 +664,9 @@
+     <protected-broadcast android:name="android.intent.action.GAMING_MODE_TURN_OFF" />
+     <protected-broadcast android:name="android.intent.action.GAMING_MODE_TURN_ON" />
+ 
++    <!-- IMS Status -->
++    <protected-broadcast android:name="android.intent.action.IMS_REGISTRATION_CHANGED" />
++
+     <!-- ====================================================================== -->
+     <!--                          RUNTIME PERMISSIONS                           -->
+     <!-- ====================================================================== -->
+diff --git a/core/res/res/values/config.xml b/core/res/res/values/config.xml
+index 2d1801f0667..359ecacc06c 100644
+--- a/core/res/res/values/config.xml
++++ b/core/res/res/values/config.xml
+@@ -56,6 +56,7 @@
+         <item><xliff:g id="id">@string/status_bar_ethernet</xliff:g></item>
+         <item><xliff:g id="id">@string/status_bar_wifi</xliff:g></item>
+         <item><xliff:g id="id">@string/status_bar_hotspot</xliff:g></item>
++        <item><xliff:g id="id">@string/status_bar_volte</xliff:g></item>
+         <item><xliff:g id="id">@string/status_bar_mobile</xliff:g></item>
+         <item><xliff:g id="id">@string/status_bar_airplane</xliff:g></item>
+         <item><xliff:g id="id">@string/status_bar_battery</xliff:g></item>
+@@ -96,6 +97,7 @@
+     <string translatable="false" name="status_bar_airplane">airplane</string>
+     <string translatable="false" name="status_bar_sensors_off">sensors_off</string>
+     <string translatable="false" name="status_bar_screen_record">screen_record</string>
++    <string translatable="false" name="status_bar_volte">volte</string>
+ 
+     <!-- Flag indicating whether the surface flinger has limited
+          alpha compositing functionality in hardware.  If set, the window
+diff --git a/core/res/res/values/symbols.xml b/core/res/res/values/symbols.xml
+index 1ade23b75e6..bc76516bebc 100644
+--- a/core/res/res/values/symbols.xml
++++ b/core/res/res/values/symbols.xml
+@@ -2917,6 +2917,7 @@
+   <java-symbol type="string" name="status_bar_camera" />
+   <java-symbol type="string" name="status_bar_sensors_off" />
+   <java-symbol type="string" name="status_bar_screen_record" />
++  <java-symbol type="string" name="status_bar_volte" />
+ 
+   <!-- Locale picker -->
+   <java-symbol type="id" name="locale_search_menu" />
+diff --git a/packages/SystemUI/res/drawable/stat_sys_volte.xml b/packages/SystemUI/res/drawable/stat_sys_volte.xml
+new file mode 100644
+index 00000000000..26f8809c414
+--- /dev/null
++++ b/packages/SystemUI/res/drawable/stat_sys_volte.xml
+@@ -0,0 +1,18 @@
++<?xml version="1.0" encoding="utf-8"?>
++<inset 
++    android:insetLeft="1.1499939dip" 
++    android:insetRight="1.5dip"
++    xmlns:android="http://schemas.android.com/apk/res/android">
++    <vector 
++        android:height="24.0dip"
++        android:width="30.569977dip"
++        android:viewportWidth="30.57"
++        android:viewportHeight="24.0">
++        <path
++            android:fillColor="#ff000000"
++            android:pathData="M10.62,13.14 A0.42,0.42,0,0,0,10.23,13.36 A1.29,1.29,0,0,0,10.23,14.47 A0.45,0.45,0,0,0,11.01,14.47 A1.29,1.29,0,0,0,11.01,13.36 A0.42,0.42,0,0,0,10.62,13.14 Z" />
++        <path
++            android:fillColor="#ff000000"
++            android:pathData="M28.54,5.6 L2.06,5.6 A1.11,1.11,0,0,0,0.95,6.71 L0.95,18.24 A1.11,1.11,0,0,0,2.06,19.35 L28.54,19.35 A1.11,1.11,0,0,0,29.65,18.24 L29.65,6.71 A1.11,1.11,0,0,0,28.54,5.6 Z M5.31,15.6 L3.43,9.84 L4.94,9.84 L6.18,14.05 L7.42,9.84 L8.82,9.84 L6.94,15.59 L5.31,15.59 Z M12.19,14.85 A1.46,1.46,0,0,1,11.56,15.43 A2.11,2.11,0,0,1,10.61,15.63 A2.13,2.13,0,0,1,9.66,15.43 A1.45,1.45,0,0,1,9,14.83 A2,2,0,0,1,9,13 A1.45,1.45,0,0,1,9.63,12.42 A2.13,2.13,0,0,1,10.58,12.22 A2.11,2.11,0,0,1,11.53,12.42 A1.46,1.46,0,0,1,12.16,13 A2,2,0,0,1,12.2,14.83 Z M13.1,12.85 A0.4,0.4,0,0,1,12.57,12.65 A1.76,1.76,0,0,0,11.23,11.77 A0.4,0.4,0,0,1,10.87,11.33 A0.4,0.4,0,0,1,11.31,10.97 A2.57,2.57,0,0,1,13.31,12.32 A0.4,0.4,0,0,1,13.1,12.8 Z M14.29,11.93 A0.5,0.5,0,0,1,13.62,11.7 A2.66,2.66,0,0,0,11.51,10.37 A0.5,0.5,0,0,1,11.56,9.37 A3.66,3.66,0,0,1,14.56,11.26 A0.5,0.5,0,0,1,14.29,11.88 Z M18.56,15.6 L14.9,15.6 L14.9,9.81 L16.33,9.81 L16.33,14.39 L18.55,14.39 L18.55,15.55 Z M22.56,10.98 L21,10.98 L21,15.6 L19.58,15.6 L19.58,10.94 L18,10.94 L18,9.81 L22.54,9.81 L22.54,10.94 Z M27.16,15.6 L23.16,15.6 L23.16,9.81 L27.03,9.81 L27.03,10.92 L24.64,10.92 L24.64,12 L26.91,12 L26.91,13.13 L24.64,13.13 L24.64,14.4 L27.17,14.4 L27.17,15.55 Z" />
++    </vector>
++</inset>
+diff --git a/packages/SystemUI/res/drawable/stat_sys_volte_slot1.xml b/packages/SystemUI/res/drawable/stat_sys_volte_slot1.xml
+new file mode 100644
+index 00000000000..4dbb700cdd1
+--- /dev/null
++++ b/packages/SystemUI/res/drawable/stat_sys_volte_slot1.xml
+@@ -0,0 +1,18 @@
++<?xml version="1.0" encoding="utf-8"?>
++<inset 
++    android:insetLeft="0.77dip"
++    android:insetRight="0.38dip"
++    xmlns:android="http://schemas.android.com/apk/res/android">
++    <vector
++        android:height="24.0dip"
++        android:width="36.649994dip"
++        android:viewportWidth="36.65"
++        android:viewportHeight="24.0">
++        <path
++            android:fillColor="#ff000000"
++            android:pathData="M10.62,13.14 A0.42,0.42,0,0,0,10.23,13.36 A1.29,1.29,0,0,0,10.23,14.47 A0.45,0.45,0,0,0,11.01,14.47 A1.29,1.29,0,0,0,11.01,13.36 A0.42,0.42,0,0,0,10.62,13.14 Z" />
++        <path
++            android:fillColor="#ff000000"
++            android:pathData="M33.85,5.6 L2.06,5.6 A1.11,1.11,0,0,0,0.95,6.71 L0.95,18.24 A1.11,1.11,0,0,0,2.06,19.35 L33.86,19.35 A1.11,1.11,0,0,0,35,18.24 L35,6.71 A1.11,1.11,0,0,0,33.85,5.6 Z M5.31,15.6 L3.43,9.84 L4.94,9.84 L6.18,14.05 L7.42,9.84 L8.82,9.84 L6.94,15.59 L5.31,15.59 Z M12.19,14.85 A1.46,1.46,0,0,1,11.56,15.43 A2.11,2.11,0,0,1,10.61,15.63 A2.13,2.13,0,0,1,9.66,15.43 A1.45,1.45,0,0,1,9,14.83 A2,2,0,0,1,9,13 A1.45,1.45,0,0,1,9.63,12.42 A2.13,2.13,0,0,1,10.58,12.22 A2.11,2.11,0,0,1,11.53,12.42 A1.46,1.46,0,0,1,12.16,13 A2,2,0,0,1,12.2,14.83 Z M13.1,12.85 A0.4,0.4,0,0,1,12.57,12.65 A1.76,1.76,0,0,0,11.23,11.77 A0.4,0.4,0,0,1,10.87,11.33 A0.4,0.4,0,0,1,11.31,10.97 A2.57,2.57,0,0,1,13.31,12.32 A0.4,0.4,0,0,1,13.1,12.8 Z M14.29,11.93 A0.5,0.5,0,0,1,13.62,11.7 A2.66,2.66,0,0,0,11.51,10.37 A0.5,0.5,0,0,1,11.56,9.37 A3.66,3.66,0,0,1,14.56,11.26 A0.5,0.5,0,0,1,14.29,11.88 Z M18.56,15.6 L14.9,15.6 L14.9,9.81 L16.33,9.81 L16.33,14.39 L18.55,14.39 L18.55,15.55 Z M22.56,10.98 L21,10.98 L21,15.6 L19.58,15.6 L19.58,10.94 L18,10.94 L18,9.81 L22.54,9.81 L22.54,10.94 Z M27.16,15.6 L23.16,15.6 L23.16,9.81 L27.03,9.81 L27.03,10.92 L24.64,10.92 L24.64,12 L26.91,12 L26.91,13.13 L24.64,13.13 L24.64,14.4 L27.17,14.4 L27.17,15.55 Z M32.16,15.67 L30.71,15.67 L30.71,11.36 L30.55,11.46 L30.33,11.58 L30,11.68 L29.73,11.78 L29.4,10.78 L29.82,10.64 A3.4,3.4,0,0,0,30.28,10.42 A3.62,3.62,0,0,0,30.69,10.12 A0.86,0.86,0,0,0,31,9.87 L32.15,9.87 L32.15,15.62 Z" />
++    </vector>
++</inset>
+diff --git a/packages/SystemUI/res/drawable/stat_sys_volte_slot12.xml b/packages/SystemUI/res/drawable/stat_sys_volte_slot12.xml
+new file mode 100644
+index 00000000000..cd3c7333ba6
+--- /dev/null
++++ b/packages/SystemUI/res/drawable/stat_sys_volte_slot12.xml
+@@ -0,0 +1,17 @@
++<?xml version="1.0" encoding="utf-8"?>
++<inset
++    android:insetLeft="0.77dip"
++    xmlns:android="http://schemas.android.com/apk/res/android">
++    <vector 
++        android:height="24.0dip"
++        android:width="36.649994dip"
++        android:viewportWidth="36.65"
++        android:viewportHeight="24.0">
++        <path 
++            android:fillColor="#ff000000"
++            android:pathData="M33.85,5.6 L2.06,5.6 A1.11,1.11,0,0,0,0.95,6.71 L0.95,18.24 A1.11,1.11,0,0,0,2.06,19.35 L33.86,19.35 A1.11,1.11,0,0,0,35,18.24 L35,6.71 A1.11,1.11,0,0,0,33.85,5.6 Z M30,9.7 L30.26,9.58 L30.49,9.43 A0.6,0.6,0,0,0,30.63,9.3 L31.32,9.3 L31.32,12.17 L30.45,12.17 L30.45,10.17 L30.38,10.17 L30.27,10.23 L30.12,10.3 L29.98,10.3 L29.78,9.71 Z M5.31,15.59 L3.43,9.84 L4.94,9.84 L6.18,14.05 L7.42,9.84 L8.82,9.84 L6.94,15.59 L5.31,15.59 Z M12.19,14.84 A1.46,1.46,0,0,1,11.56,15.42 A2.11,2.11,0,0,1,10.61,15.62 A2.13,2.13,0,0,1,9.66,15.42 A1.45,1.45,0,0,1,9,14.83 A2,2,0,0,1,9,13 A1.45,1.45,0,0,1,9.63,12.42 A2.13,2.13,0,0,1,10.58,12.22 A2.11,2.11,0,0,1,11.53,12.42 A1.46,1.46,0,0,1,12.16,13 A2,2,0,0,1,12.2,14.83 Z M13.1,12.84 A0.4,0.4,0,0,1,12.57,12.64 A1.76,1.76,0,0,0,11.23,11.76 A0.4,0.4,0,0,1,10.87,11.32 A0.4,0.4,0,0,1,11.31,10.96 A2.57,2.57,0,0,1,13.31,12.31 A0.4,0.4,0,0,1,13.1,12.8 Z M14.29,11.92 A0.5,0.5,0,0,1,13.62,11.69 A2.66,2.66,0,0,0,11.51,10.36 A0.5,0.5,0,0,1,11.56,9.36 A3.66,3.66,0,0,1,14.56,11.25 A0.5,0.5,0,0,1,14.29,11.88 Z M18.56,15.59 L14.9,15.59 L14.9,9.81 L16.33,9.81 L16.33,14.39 L18.55,14.39 L18.55,15.55 Z M22.56,10.97 L21,10.97 L21,15.59 L19.58,15.59 L19.58,10.94 L18,10.94 L18,9.81 L22.54,9.81 L22.54,10.94 Z M27.16,15.59 L23.16,15.59 L23.16,9.81 L27.03,9.81 L27.03,10.92 L24.64,10.92 L24.64,12 L26.91,12 L26.91,13.13 L24.64,13.13 L24.64,14.4 L27.17,14.4 L27.17,15.55 Z M32,15.62 L29.63,15.62 A1.41,1.41,0,0,1,29.77,15.06 A1.5,1.5,0,0,1,30,14.67 L30.38,14.33 L30.52,14.21 A2.79,2.79,0,0,0,30.86,13.9 A0.39,0.39,0,0,0,31,13.65 A0.24,0.24,0,0,0,30.88,13.43 A0.6,0.6,0,0,0,30.58,13.36 A0.76,0.76,0,0,0,30.26,13.44 A1.21,1.21,0,0,0,29.94,13.65 L29.59,13.11 A2,2,0,0,1,30,12.84 A1.64,1.64,0,0,1,30.71,12.71 A1.33,1.33,0,0,1,31.29,12.83 A0.85,0.85,0,0,1,31.66,13.15 A0.86,0.86,0,0,1,31.79,13.62 A0.81,0.81,0,0,1,31.7,14 A1.17,1.17,0,0,1,31.51,14.27 L31.27,14.49 L31.21,14.54 L31.06,14.66 L30.85,14.84 A0.78,0.78,0,0,0,30.73,14.98 L32,14.98 L32,15.63 Z" />
++        <path
++            android:fillColor="#ff000000"
++            android:pathData="M10.62,13.14 A0.42,0.42,0,0,0,10.23,13.36 A1.29,1.29,0,0,0,10.23,14.47 A0.45,0.45,0,0,0,11.01,14.47 A1.29,1.29,0,0,0,11.01,13.36 A0.42,0.42,0,0,0,10.62,13.14 Z" />
++    </vector>
++</inset>
+diff --git a/packages/SystemUI/res/drawable/stat_sys_volte_slot2.xml b/packages/SystemUI/res/drawable/stat_sys_volte_slot2.xml
+new file mode 100644
+index 00000000000..80fc9cf8dd8
+--- /dev/null
++++ b/packages/SystemUI/res/drawable/stat_sys_volte_slot2.xml
+@@ -0,0 +1,18 @@
++<?xml version="1.0" encoding="utf-8"?>
++<inset
++    android:insetLeft="0.77dip"
++    android:insetRight="0.38dip"
++    xmlns:android="http://schemas.android.com/apk/res/android">
++    <vector
++        android:height="24.0dip"
++        android:width="36.649994dip"
++        android:viewportWidth="36.65"
++        android:viewportHeight="24.0">
++        <path
++            android:fillColor="#ff000000"
++            android:pathData="M10.62,13.14 A0.42,0.42,0,0,0,10.23,13.36 A1.29,1.29,0,0,0,10.23,14.47 A0.45,0.45,0,0,0,11.01,14.47 A1.29,1.29,0,0,0,11.01,13.36 A0.42,0.42,0,0,0,10.62,13.14 Z" />
++        <path
++            android:fillColor="#ff000000"
++            android:pathData="M33.85,5.6 L2.06,5.6 A1.11,1.11,0,0,0,0.95,6.71 L0.95,18.24 A1.11,1.11,0,0,0,2.06,19.35 L33.86,19.35 A1.11,1.11,0,0,0,35,18.24 L35,6.71 A1.11,1.11,0,0,0,33.85,5.6 Z M5.31,15.6 L3.43,9.84 L4.94,9.84 L6.18,14.05 L7.42,9.84 L8.82,9.84 L6.94,15.59 L5.31,15.59 Z M12.19,14.85 A1.46,1.46,0,0,1,11.56,15.43 A2.11,2.11,0,0,1,10.61,15.63 A2.13,2.13,0,0,1,9.66,15.43 A1.45,1.45,0,0,1,9,14.83 A2,2,0,0,1,9,13 A1.45,1.45,0,0,1,9.63,12.42 A2.13,2.13,0,0,1,10.58,12.22 A2.11,2.11,0,0,1,11.53,12.42 A1.46,1.46,0,0,1,12.16,13 A2,2,0,0,1,12.2,14.83 Z M13.1,12.85 A0.4,0.4,0,0,1,12.57,12.65 A1.76,1.76,0,0,0,11.23,11.77 A0.4,0.4,0,0,1,10.87,11.33 A0.4,0.4,0,0,1,11.31,10.97 A2.57,2.57,0,0,1,13.31,12.32 A0.4,0.4,0,0,1,13.1,12.8 Z M14.29,11.93 A0.5,0.5,0,0,1,13.62,11.7 A2.66,2.66,0,0,0,11.51,10.37 A0.5,0.5,0,0,1,11.56,9.37 A3.66,3.66,0,0,1,14.56,11.26 A0.5,0.5,0,0,1,14.29,11.88 Z M18.56,15.6 L14.9,15.6 L14.9,9.81 L16.33,9.81 L16.33,14.39 L18.55,14.39 L18.55,15.55 Z M22.56,10.98 L21,10.98 L21,15.6 L19.58,15.6 L19.58,10.94 L18,10.94 L18,9.81 L22.54,9.81 L22.54,10.94 Z M27.16,15.6 L23.16,15.6 L23.16,9.81 L27.03,9.81 L27.03,10.92 L24.64,10.92 L24.64,12 L26.91,12 L26.91,13.13 L24.64,13.13 L24.64,14.4 L27.17,14.4 L27.17,15.55 Z M33,15.39 L28.58,15.39 A2.79,2.79,0,0,1,28.86,14.33 A3.27,3.27,0,0,1,29.38,13.57 A8.62,8.62,0,0,1,30.07,12.93 L30.21,12.82 L30.43,12.64 A6.64,6.64,0,0,0,31.16,12 A0.84,0.84,0,0,0,31.39,11.44 A0.63,0.63,0,0,0,31.13,10.89 A1.12,1.12,0,0,0,30.47,10.71 A1.44,1.44,0,0,0,29.79,10.88 A2.47,2.47,0,0,0,29.17,11.34 L28.55,10.44 A3.13,3.13,0,0,1,29.37,9.88 A2.92,2.92,0,0,1,30.71,9.6 A2.47,2.47,0,0,1,31.79,9.82 A1.71,1.71,0,0,1,32.51,10.44 A1.66,1.66,0,0,1,32.76,11.35 A1.62,1.62,0,0,1,32.54,12.18 A2.45,2.45,0,0,1,32.14,12.72 Q31.96,12.89,31.53,13.23 L31.36,13.37 C31.11,13.57,30.91,13.75,30.74,13.9 A1.46,1.46,0,0,0,30.4,14.33 L33,14.33 L33,15.43 Z" />
++    </vector>
++</inset>
+diff --git a/packages/SystemUI/res/layout/status_bar_volte.xml b/packages/SystemUI/res/layout/status_bar_volte.xml
+new file mode 100644
+index 00000000000..a231fed6540
+--- /dev/null
++++ b/packages/SystemUI/res/layout/status_bar_volte.xml
+@@ -0,0 +1,29 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!--
++**
++** Copyright 2020, The AospExtended Project
++**
++** Licensed under the Apache License, Version 2.0 (the "License");
++** you may not use this file except in compliance with the License.
++** You may obtain a copy of the License at
++**
++**     http://www.apache.org/licenses/LICENSE-2.0
++**
++** Unless required by applicable law or agreed to in writing, software
++** distributed under the License is distributed on an "AS IS" BASIS,
++** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++** See the License for the specific language governing permissions and
++** limitations under the License.
++*/
++-->
++<com.android.systemui.statusbar.StatusBarVolteView
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:systemui="http://schemas.android.com/apk/res-auto"
++    android:id="@+id/volte_icon"
++    android:layout_height="wrap_content"
++    android:layout_width="wrap_content"
++    android:layout_gravity="center_vertical"
++    android:visibility="gone"
++    android:paddingStart="1dp"
++    android:paddingEnd="1dp"
++/>
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/StatusBarVolteView.java b/packages/SystemUI/src/com/android/systemui/statusbar/StatusBarVolteView.java
+new file mode 100644
+index 00000000000..769208bf5ea
+--- /dev/null
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/StatusBarVolteView.java
+@@ -0,0 +1,148 @@
++/*
++ * Copyright (C) 2018 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package com.android.systemui.statusbar;
++
++import static com.android.systemui.plugins.DarkIconDispatcher.getTint;
++import static com.android.systemui.plugins.DarkIconDispatcher.isInArea;
++import static com.android.systemui.statusbar.StatusBarIconView.STATE_DOT;
++import static com.android.systemui.statusbar.StatusBarIconView.STATE_HIDDEN;
++import static com.android.systemui.statusbar.StatusBarIconView.STATE_ICON;
++
++import android.content.Context;
++import android.content.res.ColorStateList;
++import android.graphics.Rect;
++import android.util.AttributeSet;
++import android.view.Gravity;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.widget.FrameLayout;
++import android.widget.ImageView;
++import android.widget.LinearLayout;
++
++import android.util.Slog;
++
++import com.android.systemui.R;
++import com.android.systemui.plugins.DarkIconDispatcher.DarkReceiver;
++import com.android.systemui.statusbar.policy.NetworkController.IconState;
++
++public class StatusBarVolteView extends ImageView implements
++        StatusIconDisplayable {
++    private static final String TAG = "StatusBarVolteView";
++
++    private IconState mState;
++    private String mSlot;
++    private int mVisibleState = -1;
++
++    public static StatusBarVolteView fromContext(Context context, String slot) {
++        LayoutInflater inflater = LayoutInflater.from(context);
++        StatusBarVolteView v = (StatusBarVolteView) inflater.inflate(R.layout.status_bar_volte, null);
++        v.setSlot(slot);
++        v.setVisibleState(STATE_ICON);
++        return v;
++    }
++
++    public StatusBarVolteView(Context context) {
++        super(context);
++    }
++
++    public StatusBarVolteView(Context context, AttributeSet attrs) {
++        super(context, attrs);
++    }
++
++    public StatusBarVolteView(Context context, AttributeSet attrs, int defStyleAttr) {
++        super(context, attrs, defStyleAttr);
++    }
++
++    public StatusBarVolteView(Context context, AttributeSet attrs, int defStyleAttr,
++            int defStyleRes) {
++        super(context, attrs, defStyleAttr, defStyleRes);
++    }
++
++    public void setSlot(String slot) {
++        mSlot = slot;
++    }
++
++    @Override
++    public String getSlot() {
++        return mSlot;
++    }
++
++    @Override
++    public void setVisibleState(int state, boolean animate) {
++        if (state == mVisibleState) {
++            return;
++        }
++        mVisibleState = state;
++
++        switch (state) {
++            case STATE_ICON:
++                setVisibility(View.VISIBLE);
++                break;
++            case STATE_DOT:
++                setVisibility(View.GONE);
++                break;
++            case STATE_HIDDEN:
++            default:
++                setVisibility(View.GONE);
++                break;
++        }
++    }
++
++    @Override
++    public int getVisibleState() {
++        return mVisibleState;
++    }
++
++    @Override
++    public boolean isIconVisible() {
++        return mState != null && mState.visible;
++    }
++
++    public void applyVolteState(IconState state) {
++        mState = state;
++        if (state == null) {
++            setVisibility(View.INVISIBLE);
++        } else {
++            initViewState(state);
++        }
++    }
++
++    private void initViewState(IconState state) {
++        setContentDescription(state.contentDescription);
++        if (state.icon > 0) {
++            setImageDrawable(mContext.getDrawable(state.icon));
++        }
++        setVisibility(state.visible ? View.VISIBLE : View.GONE);
++    }
++
++    @Override
++    public void setDecorColor(int color) {
++    }
++
++    @Override
++    public void setStaticDrawableColor(int color) {
++        ColorStateList list = ColorStateList.valueOf(color);
++         setImageTintList(list);
++    }
++
++    @Override
++    public void onDarkChanged(Rect area, float darkIntensity, int tint) {
++        ColorStateList color = ColorStateList.valueOf(getTint(area, this, tint));
++        setImageTintList(color);
++    }
++}
++
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarIconController.java b/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarIconController.java
+index 52f7fbd8e0c..5bc4305553e 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarIconController.java
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarIconController.java
+@@ -21,6 +21,7 @@
+ import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_MOBILE;
+ import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_NETWORK_TRAFFIC;
+ import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_WIFI;
++import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_VOLTE;
+ 
+ import android.content.Context;
+ import android.content.ContentResolver;
+@@ -48,12 +49,15 @@
+ import com.android.systemui.statusbar.StatusBarIconView;
+ import com.android.systemui.statusbar.StatusBarMobileView;
+ import com.android.systemui.statusbar.StatusBarWifiView;
++import com.android.systemui.statusbar.StatusBarVolteView;
+ import com.android.systemui.statusbar.StatusIconDisplayable;
+ import com.android.systemui.statusbar.phone.StatusBarSignalPolicy.MobileIconState;
+ import com.android.systemui.statusbar.phone.StatusBarSignalPolicy.WifiIconState;
+ import com.android.systemui.statusbar.policy.NetworkTrafficSB;
+ import com.android.systemui.util.Utils.DisableStateTracker;
+ 
++import com.android.systemui.statusbar.policy.NetworkController.IconState;
++
+ import java.util.List;
+ 
+ public interface StatusBarIconController {
+@@ -72,6 +76,7 @@
+     public void setSignalIcon(String slot, WifiIconState state);
+     public void setMobileIcons(String slot, List<MobileIconState> states);
+     public void setIconVisibility(String slot, boolean b);
++    public void setVolteIcon(String slot, IconState state);
+ 
+     /**
+      * Sets the live region mode for the icon
+@@ -270,6 +275,9 @@ protected StatusIconDisplayable addHolder(int index, String slot, boolean blocke
+ 
+                 case TYPE_NETWORK_TRAFFIC:
+                     return addNetworkTraffic(index, slot);
++
++                case TYPE_VOLTE:
++                    return addVolteIcon(index, slot, holder.getVolteState());
+             }
+ 
+             return null;
+@@ -314,6 +322,13 @@ protected StatusBarMobileView addMobileIcon(int index, String slot, MobileIconSt
+             return view;
+         }
+ 
++        protected StatusBarVolteView addVolteIcon(int index, String slot, IconState state) {
++            StatusBarVolteView view = onCreateStatusBarVolteView(slot);
++            view.applyVolteState(state);
++            mGroup.addView(view, index, onCreateLayoutParams());
++            return view;
++        }
++
+         private StatusBarIconView onCreateStatusBarIconView(String slot, boolean blocked) {
+             return new StatusBarIconView(mContext, slot, null, blocked);
+         }
+@@ -328,6 +343,11 @@ private StatusBarMobileView onCreateStatusBarMobileView(String slot) {
+             return view;
+         }
+ 
++        private StatusBarVolteView onCreateStatusBarVolteView(String slot) {
++            StatusBarVolteView view = StatusBarVolteView.fromContext(mContext, slot);
++            return view;
++        }
++
+         private NetworkTrafficSB onCreateNetworkTraffic(String slot) {
+             NetworkTrafficSB view = new NetworkTrafficSB(mContext);
+             view.setPadding(2, 0, 2, 0);
+@@ -393,6 +413,10 @@ public void onSetIconHolder(int viewIndex, StatusBarIconHolder holder) {
+ 
+                 case TYPE_MOBILE:
+                     onSetMobileIcon(viewIndex, holder.getMobileState());
++                    return;
++                case TYPE_VOLTE:
++                    onSetVolteIcon(viewIndex, holder.getVolteState());
++                    return;
+                 default:
+                     break;
+             }
+@@ -420,6 +444,13 @@ public void onSetMobileIcon(int viewIndex, MobileIconState state) {
+             }
+         }
+ 
++        public void onSetVolteIcon(int viewIndex, IconState state) {
++            StatusBarVolteView view = (StatusBarVolteView) mGroup.getChildAt(viewIndex);
++            if (view != null) {
++                view.applyVolteState(state);
++            }
++        }
++
+         @Override
+         public void dispatchDemoCommand(String command, Bundle args) {
+             if (!mDemoable) {
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarIconControllerImpl.java b/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarIconControllerImpl.java
+index d0e806769f1..291093d165e 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarIconControllerImpl.java
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarIconControllerImpl.java
+@@ -38,6 +38,8 @@
+ import com.android.systemui.tuner.TunerService;
+ import com.android.systemui.tuner.TunerService.Tunable;
+ 
++import com.android.systemui.statusbar.policy.NetworkController.IconState;
++
+ import java.io.FileDescriptor;
+ import java.io.PrintWriter;
+ import java.util.ArrayList;
+@@ -215,6 +217,26 @@ public void setMobileIcons(String slot, List<MobileIconState> iconStates) {
+         }
+     }
+ 
++    @Override
++    public void setVolteIcon(String slot, IconState state) {
++
++        int index = getSlotIndex(slot);
++
++        if (state == null) {
++            removeIcon(index, 0);
++            return;
++        }
++
++        StatusBarIconHolder holder = getIcon(index, 0);
++        if (holder == null) {
++            holder = StatusBarIconHolder.fromVolteIconState(state);
++            setIcon(index, holder);
++        } else {
++            holder.setVolteState(state);
++            handleSet(index, holder);
++        }
++    }
++
+     @Override
+     public void setExternalIcon(String slot) {
+         int viewIndex = getViewIndex(getSlotIndex(slot), 0);
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarIconHolder.java b/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarIconHolder.java
+index 78dcb3ada23..21fea4ef4e3 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarIconHolder.java
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarIconHolder.java
+@@ -24,6 +24,7 @@
+ import com.android.internal.statusbar.StatusBarIcon;
+ import com.android.systemui.statusbar.phone.StatusBarSignalPolicy.MobileIconState;
+ import com.android.systemui.statusbar.phone.StatusBarSignalPolicy.WifiIconState;
++import com.android.systemui.statusbar.policy.NetworkController.IconState;
+ 
+ /**
+  * Wraps {@link com.android.internal.statusbar.StatusBarIcon} so we can still have a uniform list
+@@ -32,11 +33,13 @@
+     public static final int TYPE_ICON = 0;
+     public static final int TYPE_WIFI = 1;
+     public static final int TYPE_MOBILE = 2;
++    public static final int TYPE_VOLTE = 3;
+     public static final int TYPE_NETWORK_TRAFFIC = 42;
+ 
+     private StatusBarIcon mIcon;
+     private WifiIconState mWifiState;
+     private MobileIconState mMobileState;
++    private IconState mVolteState;
+     private int mType = TYPE_ICON;
+     private int mTag = 0;
+     private boolean mVisible = true;
+@@ -71,6 +74,13 @@ public static StatusBarIconHolder fromMobileIconState(MobileIconState state) {
+         return holder;
+     }
+ 
++    public static StatusBarIconHolder fromVolteIconState(IconState state) {
++        StatusBarIconHolder holder = new StatusBarIconHolder();
++        holder.mVolteState = state;
++        holder.mType = TYPE_VOLTE;
++        return holder;
++    }
++
+     public static StatusBarIconHolder fromNetworkTraffic() {
+         StatusBarIconHolder holder = new StatusBarIconHolder();
+         holder.mType = TYPE_NETWORK_TRAFFIC;
+@@ -104,6 +114,14 @@ public void setMobileState(MobileIconState state) {
+         mMobileState = state;
+     }
+ 
++    public IconState getVolteState() {
++        return mVolteState;
++    }
++
++    public void setVolteState(IconState state) {
++        mVolteState = state;
++    }
++
+     public boolean isVisible() {
+         switch (mType) {
+             case TYPE_ICON:
+@@ -112,6 +130,8 @@ public boolean isVisible() {
+                 return mWifiState.visible;
+             case TYPE_MOBILE:
+                 return mMobileState.visible;
++            case TYPE_VOLTE:
++                return mVolteState.visible;
+             case TYPE_NETWORK_TRAFFIC:
+                 return true;
+ 
+@@ -136,6 +156,10 @@ public void setVisible(boolean visible) {
+             case TYPE_MOBILE:
+                 mMobileState.visible = visible;
+                 break;
++
++            case TYPE_VOLTE:
++                mVolteState.visible = visible;
++                break;
+         }
+     }
+ 
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarSignalPolicy.java b/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarSignalPolicy.java
+index dfa9e412ca1..7bc23f4bbd3 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarSignalPolicy.java
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarSignalPolicy.java
+@@ -48,6 +48,7 @@
+     private final String mSlotWifi;
+     private final String mSlotEthernet;
+     private final String mSlotVpn;
++    private final String mSlotVolte;
+ 
+     private final Context mContext;
+     private final StatusBarIconController mIconController;
+@@ -80,6 +81,8 @@ public StatusBarSignalPolicy(Context context, StatusBarIconController iconContro
+         mSlotVpn      = mContext.getString(com.android.internal.R.string.status_bar_vpn);
+         mActivityEnabled = mContext.getResources().getBoolean(R.bool.config_showActivity);
+ 
++        mSlotVolte      = mContext.getString(com.android.internal.R.string.status_bar_volte);
++
+         mIconController = iconController;
+         mNetworkController = Dependency.get(NetworkController.class);
+         mSecurityController = Dependency.get(SecurityController.class);
+@@ -320,6 +323,11 @@ public void setMobileDataEnabled(boolean enabled) {
+         // Don't care.
+     }
+ 
++    @Override
++    public void setVolteIcon(IconState icon) {
++        mIconController.setVolteIcon(mSlotVolte, icon);
++    }
++
+     private static abstract class SignalIconState {
+         public boolean visible;
+         public boolean activityOut;
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/policy/CallbackHandler.java b/packages/SystemUI/src/com/android/systemui/statusbar/policy/CallbackHandler.java
+index 9a4abef544c..f2e5ccf63da 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/policy/CallbackHandler.java
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/policy/CallbackHandler.java
+@@ -42,6 +42,7 @@
+     private static final int MSG_MOBILE_DATA_ENABLED_CHANGED = 5;
+     private static final int MSG_ADD_REMOVE_EMERGENCY        = 6;
+     private static final int MSG_ADD_REMOVE_SIGNAL           = 7;
++    private static final int MSG_VOLTE_ICON_CHANGED          = 8;
+ 
+     // All the callbacks.
+     private final ArrayList<EmergencyListener> mEmergencyListeners = new ArrayList<>();
+@@ -104,6 +105,11 @@ public void handleMessage(Message msg) {
+                     mSignalCallbacks.remove((SignalCallback) msg.obj);
+                 }
+                 break;
++            case MSG_VOLTE_ICON_CHANGED:
++                for (SignalCallback signalCluster : mSignalCallbacks) {
++                    signalCluster.setVolteIcon((IconState) msg.obj);
++                }
++                break;
+         }
+     }
+ 
+@@ -164,6 +170,11 @@ public void setIsAirplaneMode(IconState icon) {
+         obtainMessage(MSG_AIRPLANE_MODE_CHANGED, icon).sendToTarget();;
+     }
+ 
++    @Override
++    public void setVolteIcon(IconState icon) {
++        obtainMessage(MSG_VOLTE_ICON_CHANGED, icon).sendToTarget();;
++    }
++
+     public void setListening(EmergencyListener listener, boolean listening) {
+         obtainMessage(MSG_ADD_REMOVE_EMERGENCY, listening ? 1 : 0, 0, listener).sendToTarget();
+     }
+@@ -172,4 +183,4 @@ public void setListening(SignalCallback listener, boolean listening) {
+         obtainMessage(MSG_ADD_REMOVE_SIGNAL, listening ? 1 : 0, 0, listener).sendToTarget();
+     }
+ 
+-}
+\ No newline at end of file
++}
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/policy/MobileSignalController.java b/packages/SystemUI/src/com/android/systemui/statusbar/policy/MobileSignalController.java
+index 39f51c24e17..8c1ab293cc4 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/policy/MobileSignalController.java
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/policy/MobileSignalController.java
+@@ -73,6 +73,9 @@
+ 
+ public class MobileSignalController extends SignalController<
+         MobileSignalController.MobileState, MobileSignalController.MobileIconGroup> {
++
++    private static final String IMS_STATUS_CHANGED = "android.intent.action.IMS_REGISTRATION_CHANGED";
++
+     private final TelephonyManager mPhone;
+     private final SubscriptionDefaults mDefaults;
+     private final String mNetworkNameDefault;
+@@ -200,7 +203,7 @@ void observe() {
+           *  @hide
+           */
+          @Override
+-         public void onChange(boolean selfChange) {
++         public void onChange(boolean selfChange, Uri uri) {
+              updateSettings();
+          }
+      }
+@@ -579,11 +582,15 @@ public void notifyListeners(SignalCallback callback) {
+         }
+ 
+         callback.setMobileDataIndicators(statusIcon, qsIcon, typeIcon, qsTypeIcon,
+-                activityIn, activityOut, volteIcon, dataContentDescription, dataContentDescriptionHtml,
++                activityIn, activityOut, 0, dataContentDescription, dataContentDescriptionHtml,
+                 description, icons.mIsWide, mSubscriptionInfo.getSubscriptionId(),
+                 mCurrentState.roaming);
+     }
+ 
++    public boolean isVolteShowing() {
++        return mConfig.showVolteIcon && isVolteSwitchOn() && mCurrentState.imsRegistered;
++    }
++
+     @Override
+     protected MobileState cleanState() {
+         return new MobileState();
+@@ -923,6 +930,7 @@ public void onRegistered(int imsTransportType) {
+                     Log.d(mTag, "onRegistered imsTransportType=" + imsTransportType);
+                     mCurrentState.imsRegistered = true;
+                     mImsTransportType = imsTransportType;
++                    mContext.sendBroadcast(new Intent(IMS_STATUS_CHANGED));
+                     notifyListenersIfNecessary();
+                 }
+ 
+@@ -937,6 +945,7 @@ public void onRegistering(int imsTransportType) {
+                 public void onUnregistered(ImsReasonInfo info) {
+                     Log.d(mTag, "onDeregistered imsReasonInfo=" + info);
+                     mCurrentState.imsRegistered = false;
++                    mContext.sendBroadcast(new Intent(IMS_STATUS_CHANGED));
+                     notifyListenersIfNecessary();
+                 }
+     };
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkController.java b/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkController.java
+index bc121f16fd2..52d8407fb92 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkController.java
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkController.java
+@@ -85,6 +85,8 @@ default void setEthernetIndicators(IconState icon) {}
+         default void setIsAirplaneMode(IconState icon) {}
+ 
+         default void setMobileDataEnabled(boolean enabled) {}
++
++        default void setVolteIcon(IconState icon) {}
+     }
+ 
+     public interface EmergencyListener {
+@@ -92,9 +94,9 @@ default void setMobileDataEnabled(boolean enabled) {}
+     }
+ 
+     public static class IconState {
+-        public final boolean visible;
+-        public final int icon;
+-        public final String contentDescription;
++        public boolean visible;
++        public int icon;
++        public String contentDescription;
+ 
+         public IconState(boolean visible, int icon, String contentDescription) {
+             this.visible = visible;
+@@ -125,4 +127,4 @@ public IconState(boolean visible, int icon, int contentDescription,
+             void onSettingsActivityTriggered(Intent settingsIntent);
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkControllerImpl.java b/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkControllerImpl.java
+index e3b6a33861e..00f9836f5ef 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkControllerImpl.java
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkControllerImpl.java
+@@ -30,16 +30,19 @@
+ import android.content.IntentFilter;
+ import android.content.res.Configuration;
+ import android.content.res.Resources;
++import android.database.ContentObserver;
+ import android.net.ConnectivityManager;
+ import android.net.Network;
+ import android.net.NetworkCapabilities;
+ import android.net.NetworkScoreManager;
+ import android.net.wifi.WifiManager;
++import android.net.Uri;
+ import android.os.AsyncTask;
+ import android.os.Bundle;
+ import android.os.Handler;
+ import android.os.Looper;
+ import android.os.PersistableBundle;
++import android.os.UserHandle;
+ import android.provider.Settings;
+ import android.telephony.CarrierConfigManager;
+ import android.telephony.CellSignalStrength;
+@@ -87,6 +90,8 @@
+     // additional diagnostics, but not logspew
+     static final boolean CHATTY =  Log.isLoggable(TAG + "Chat", Log.DEBUG);
+ 
++    private static final String IMS_STATUS_CHANGED = "android.intent.action.IMS_REGISTRATION_CHANGED";
++
+     private static final int EMERGENCY_NO_CONTROLLERS = 0;
+     private static final int EMERGENCY_FIRST_CONTROLLER = 100;
+     private static final int EMERGENCY_VOICE_CONTROLLER = 200;
+@@ -168,6 +173,9 @@ public void onConfigChanged(Configuration newConfig) {
+                     mReceiverHandler.post(() -> handleConfigurationChanged());
+                 }
+             };
++
++    private final ContentObserver mVolteObserver;
++
+     /**
+      * Construct this controller object and register for updates.
+      */
+@@ -305,6 +313,15 @@ public void onActiveDataSubscriptionIdChanged(int subId) {
+                 doUpdateMobileControllers();
+             }
+         };
++
++        mVolteObserver = new ContentObserver(
++               new Handler(mContext.getMainLooper())) {
++            @Override
++            public void onChange(boolean selfChange, Uri uri) {
++                super.onChange(selfChange, uri);
++                updateVolteIcon();
++            }
++        };
+     }
+ 
+     private final Runnable mClearForceValidated = () -> {
+@@ -355,6 +372,7 @@ void registerListeners() {
+         filter.addAction(ConnectivityManager.INET_CONDITION_ACTION);
+         filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+         filter.addAction(CarrierConfigManager.ACTION_CARRIER_CONFIG_CHANGED);
++        filter.addAction(IMS_STATUS_CHANGED);
+         mBroadcastDispatcher.registerReceiverWithHandler(this, filter, mReceiverHandler);
+         mListening = true;
+ 
+@@ -382,6 +400,10 @@ void registerListeners() {
+         // Initial setup of emergency information. Handled as if we had received a sticky broadcast
+         // of TelephonyManager.ACTION_DEFAULT_VOICE_SUBSCRIPTION_CHANGED.
+         mReceiverHandler.post(this::recalculateEmergency);
++
++        mContext.getContentResolver().registerContentObserver(
++                Settings.System.getUriFor(Settings.System.SHOW_VOLTE_ICON), false,
++                mVolteObserver, UserHandle.USER_ALL);
+     }
+ 
+     private void unregisterListeners() {
+@@ -392,6 +414,8 @@ private void unregisterListeners() {
+         }
+         mSubscriptionManager.removeOnSubscriptionsChangedListener(mSubscriptionListener);
+         mBroadcastDispatcher.unregisterReceiver(this);
++
++        mContext.getContentResolver().unregisterContentObserver(mVolteObserver);
+     }
+ 
+     public int getConnectedWifiLevel() {
+@@ -530,9 +554,56 @@ public void addCallback(SignalCallback cb) {
+             MobileSignalController mobileSignalController = mMobileSignalControllers.valueAt(i);
+             mobileSignalController.notifyListeners(cb);
+         }
++        boolean showVolte = Settings.System.getIntForUser(mContext.getContentResolver(),
++                Settings.System.SHOW_VOLTE_ICON, 1,
++                UserHandle.USER_CURRENT) == 1;
++        if (mMobileSignalControllers.size() == 2) {
++            boolean volte1 = mMobileSignalControllers.valueAt(0).isVolteShowing();
++            boolean volte2 = mMobileSignalControllers.valueAt(1).isVolteShowing();
++            cb.setVolteIcon(new IconState((volte1 || volte2) && showVolte,
++                   getVolteResId(volte1, volte2), com.android.internal.R.string.status_bar_volte, mContext));
++        } else if (mMobileSignalControllers.size() == 1) {
++            boolean volte = mMobileSignalControllers.valueAt(0).isVolteShowing();
++            cb.setVolteIcon(new IconState(volte && showVolte,
++                   R.drawable.stat_sys_volte, com.android.internal.R.string.status_bar_volte, mContext));
++        } else {
++            cb.setVolteIcon(new IconState(false,
++                    0, com.android.internal.R.string.status_bar_volte, mContext));
++        }
+         mCallbackHandler.setListening(cb, true);
+     }
+ 
++    public void updateVolteIcon() {
++        boolean showVolte = Settings.System.getIntForUser(mContext.getContentResolver(),
++                Settings.System.SHOW_VOLTE_ICON, 1,
++                UserHandle.USER_CURRENT) == 1;
++        if (mMobileSignalControllers.size() == 2) {
++            boolean volte1 = mMobileSignalControllers.valueAt(0).isVolteShowing();
++            boolean volte2 = mMobileSignalControllers.valueAt(1).isVolteShowing();
++            mCallbackHandler.setVolteIcon(new IconState((volte1 || volte2) && showVolte,
++                    getVolteResId(volte1, volte2), com.android.internal.R.string.status_bar_volte, mContext));
++        } else if (mMobileSignalControllers.size() == 1) {
++            boolean volte = mMobileSignalControllers.valueAt(0).isVolteShowing();
++            mCallbackHandler.setVolteIcon(new IconState(volte && showVolte,
++                   R.drawable.stat_sys_volte, com.android.internal.R.string.status_bar_volte, mContext));
++        } else {
++            mCallbackHandler.setVolteIcon(new IconState(false,
++                    0, com.android.internal.R.string.status_bar_volte, mContext));
++        }
++    }
++
++    private int getVolteResId(boolean volte1, boolean volte2) {
++        int mResId = R.drawable.stat_sys_volte;
++        if (volte1 && volte2) {
++            mResId = R.drawable.stat_sys_volte_slot12;
++        } else if (volte1) {
++            mResId = R.drawable.stat_sys_volte_slot1;
++        } else if (volte2) {
++            mResId = R.drawable.stat_sys_volte_slot2;
++        }
++        return mResId;
++    }
++
+     @Override
+     public void removeCallback(SignalCallback cb) {
+         mCallbackHandler.setListening(cb, false);
+@@ -604,6 +675,9 @@ public void onReceive(Context context, Intent intent) {
+                 mConfig = Config.readConfig(mContext);
+                 mReceiverHandler.post(this::handleConfigurationChanged);
+                 break;
++            case IMS_STATUS_CHANGED:
++                updateVolteIcon();
++                break;
+             default:
+                 int subId = intent.getIntExtra(SubscriptionManager.EXTRA_SUBSCRIPTION_INDEX,
+                         SubscriptionManager.INVALID_SUBSCRIPTION_ID);

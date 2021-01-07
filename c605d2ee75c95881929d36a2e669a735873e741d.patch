@@ -1,0 +1,58 @@
+From c605d2ee75c95881929d36a2e669a735873e741d Mon Sep 17 00:00:00 2001
+From: SagarMakhar <sagarmakhar@gmail.com>
+Date: Sat, 5 Dec 2020 19:55:38 +0000
+Subject: [PATCH] fixes
+
+Signed-off-by: SagarMakhar <sagarmakhar@gmail.com>
+---
+ .../com/android/systemui/statusbar/StatusBarImsView.java   | 4 ++++
+ .../systemui/statusbar/policy/NetworkControllerImpl.java   | 7 +++++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/StatusBarImsView.java b/packages/SystemUI/src/com/android/systemui/statusbar/StatusBarImsView.java
+index 519a8881646..80ce00dc429 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/StatusBarImsView.java
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/StatusBarImsView.java
+@@ -165,6 +165,10 @@ private void initViewState(ImsIconState state) {
+             mVowifiIcon.setVisibility(View.VISIBLE);
+             if (preferVowifi && VOWIFI_ICONS.indexOf(state.icon2) == VOLTE_ICONS.indexOf(state.icon)) {
+                 mVolteIcon.setVisibility(View.GONE);
++            } else if (preferVowifi && VOWIFI_ICONS.indexOf(state.icon2) == 2 && VOLTE_ICONS.indexOf(state.icon) == 0) {
++                mVolteIcon.setImageDrawable(mContext.getDrawable(VOLTE_ICONS.get(1)));
++            } else if (preferVowifi && VOWIFI_ICONS.indexOf(state.icon2) == 1 && VOLTE_ICONS.indexOf(state.icon) == 0) {
++                mVolteIcon.setImageDrawable(mContext.getDrawable(VOLTE_ICONS.get(2)));
+             }
+         } else {
+             mVowifiIcon.setVisibility(View.GONE);
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkControllerImpl.java b/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkControllerImpl.java
+index 15315fe2e58..613edd7eac3 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkControllerImpl.java
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkControllerImpl.java
+@@ -407,6 +407,9 @@ void registerListeners() {
+         mContext.getContentResolver().registerContentObserver(
+                 Settings.System.getUriFor(Settings.System.SHOW_VOWIFI_ICON), false,
+                 mImsObserver, UserHandle.USER_ALL);
++        mContext.getContentResolver().registerContentObserver(
++                Settings.System.getUriFor(Settings.System.PREFER_VOWIFI_ICON), false,
++                mImsObserver, UserHandle.USER_ALL);
+     }
+ 
+     private void unregisterListeners() {
+@@ -567,7 +570,7 @@ public void addCallback(SignalCallback cb) {
+             boolean volte1 = mMobileSignalControllers.valueAt(0).isVolteShowing();
+             boolean volte2 = mMobileSignalControllers.valueAt(1).isVolteShowing();
+             boolean vowifi1 = mMobileSignalControllers.valueAt(0).isVowifiAvailable();
+-            boolean vowifi2 = mMobileSignalControllers.valueAt(0).isVowifiAvailable();
++            boolean vowifi2 = mMobileSignalControllers.valueAt(1).isVowifiAvailable();
+             cb.setImsIcon(new ImsIconState((volte1 || volte2) && showVolte, (vowifi1 || vowifi2) && showVowifi,
+                    getVolteResId(volte1, volte2), getVowifiResId(vowifi1, vowifi2), com.android.internal.R.string.status_bar_ims, mContext));
+         } else if (mMobileSignalControllers.size() == 1) {
+@@ -593,7 +596,7 @@ public void updateImsIcon() {
+             boolean volte1 = mMobileSignalControllers.valueAt(0).isVolteShowing();
+             boolean volte2 = mMobileSignalControllers.valueAt(1).isVolteShowing();
+             boolean vowifi1 = mMobileSignalControllers.valueAt(0).isVowifiAvailable();
+-            boolean vowifi2 = mMobileSignalControllers.valueAt(0).isVowifiAvailable();
++            boolean vowifi2 = mMobileSignalControllers.valueAt(1).isVowifiAvailable();
+             mCallbackHandler.setImsIcon(new ImsIconState((volte1 || volte2) && showVolte, (vowifi1 || vowifi2) && showVowifi,
+                    getVolteResId(volte1, volte2), getVowifiResId(vowifi1, vowifi2), com.android.internal.R.string.status_bar_ims, mContext));
+         } else if (mMobileSignalControllers.size() == 1) {
