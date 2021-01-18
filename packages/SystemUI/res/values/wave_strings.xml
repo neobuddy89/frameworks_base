@@ -43,4 +43,7 @@
     <!-- Name of the volte/vowifi status bar icon. -->
     <string name="status_bar_ims">VoLTE/VoWiFi</string>
 
+    <!-- Title of statusbar tuner -->
+    <string name="status_bar_icons">Status bar icons</string>
+
 </resources>
