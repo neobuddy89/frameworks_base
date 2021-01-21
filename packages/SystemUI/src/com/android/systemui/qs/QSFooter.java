@@ -19,8 +19,6 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.android.systemui.statusbar.policy.BrightnessMirrorController;
-
 /**
  * The bottom footer of the quick settings panel.
  */
@@ -76,11 +74,6 @@ public interface QSFooter {
      * Sets the {@link android.view.View.OnClickListener to be used on elements that expend QS.
      */
     void setExpandClickListener(View.OnClickListener onClickListener);
-
-    /**
-     * Sets the given {@link BrightnessMirrorController} to be the one that will display brightness slider.
-     */
-    void setBrightnessMirror(BrightnessMirrorController c);
 
     default void disable(int state1, int state2, boolean animate) {}
 }
