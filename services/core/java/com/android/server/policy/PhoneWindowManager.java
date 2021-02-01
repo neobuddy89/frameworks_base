@@ -716,6 +716,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     private SwipeToScreenshotListener mSwipeToScreenshot;
 
+    private static final int MSG_POWER_LONG_PRESS_FOR_HARDWARE_RESET = 110;
+    private static final int TIME_FOR_SCREEN_OFF_BEFORE_HARDWARE_RESET = 7300;
+
     private class PolicyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -809,6 +812,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                             KeyEvent.changeAction(event, KeyEvent.ACTION_UP));
                     break;
                 }
+                case MSG_POWER_LONG_PRESS_FOR_HARDWARE_RESET:
+                    mPowerManager.goToSleep(SystemClock.uptimeMillis(),
+                        PowerManager.GO_TO_SLEEP_REASON_POWER_BUTTON,
+                        PowerManager.GO_TO_SLEEP_FLAG_NO_DOZE);
+                    break;
             }
         }
     }
@@ -5438,10 +5446,16 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private void schedulePossibleVeryLongPressReboot() {
         mHandler.removeCallbacks(mPossibleVeryLongPressReboot);
         mHandler.postDelayed(mPossibleVeryLongPressReboot, mVeryLongPressTimeout);
+        Message msg = mHandler.obtainMessage(MSG_POWER_LONG_PRESS_FOR_HARDWARE_RESET);
+        msg.setAsynchronous(true);
+        Slog.d(TAG,
+               "send Delayed Message WHEN interactive: MSG_POWER_LONG_PRESS_FOR_HARDWARE_RESET");
+        mHandler.sendMessageDelayed(msg, TIME_FOR_SCREEN_OFF_BEFORE_HARDWARE_RESET);
     }
 
     private void cancelPossibleVeryLongPressReboot() {
         mHandler.removeCallbacks(mPossibleVeryLongPressReboot);
+        mHandler.removeMessages(MSG_POWER_LONG_PRESS_FOR_HARDWARE_RESET);
     }
 
     // TODO (multidisplay): Support multiple displays in WindowManagerPolicy.
