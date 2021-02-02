@@ -22,23 +22,23 @@
 <familyset version="23">
     <!-- first font is default -->
     <family name="sans-serif">
-        <font weight="100" style="normal">Roboto-Thin.ttf</font>
+        <font weight="100" style="normal">SlateForOnePlus-Thin.ttf</font>
         <font weight="100" style="italic">Roboto-ThinItalic.ttf</font>
-        <font weight="200" style="normal">Roboto-Light.ttf</font>
+        <font weight="200" style="normal">SlateForOnePlus-Light.ttf</font>
         <font weight="200" style="italic">Roboto-LightItalic.ttf</font>
-        <font weight="300" style="normal">Roboto-Book.ttf</font>
+        <font weight="300" style="normal">SlateForOnePlus-Book.ttf</font>
         <font weight="300" style="italic">Roboto-LightItalic.ttf</font>
-        <font weight="400" style="normal">Roboto-Book.ttf</font>
+        <font weight="400" style="normal">SlateForOnePlus-Book.ttf</font>
         <font weight="400" style="italic">Roboto-Italic.ttf</font>
-        <font weight="500" style="normal">Roboto-Regular.ttf</font>
+        <font weight="500" style="normal">SlateForOnePlus-Regular.ttf</font>
         <font weight="500" style="italic">Roboto-MediumItalic.ttf</font>
-        <font weight="600" style="normal">Roboto-Medium.ttf</font>
+        <font weight="600" style="normal">SlateForOnePlus-Medium.ttf</font>
         <font weight="600" style="italic">Roboto-MediumItalic.ttf</font>
-        <font weight="700" style="normal">Roboto-Medium.ttf</font>
+        <font weight="700" style="normal">SlateForOnePlus-Medium.ttf</font>
         <font weight="700" style="italic">Roboto-BoldItalic.ttf</font>
-        <font weight="800" style="normal">Roboto-Bold.ttf</font>
+        <font weight="800" style="normal">SlateForOnePlus-Bold.ttf</font>
         <font weight="800" style="italic">Roboto-BoldItalic.ttf</font>
-        <font weight="900" style="normal">Roboto-Black.ttf</font>
+        <font weight="900" style="normal">SlateForOnePlus-Black.ttf</font>
         <font weight="900" style="italic">Roboto-BlackItalic.ttf</font>
     </family>
 
@@ -56,17 +56,36 @@
     <alias name="verdana" to="sans-serif" />
 
     <family name="sans-serif-condensed">
-        <font weight="300" style="normal">Roboto-Thin.ttf</font>
+        <font weight="300" style="normal">SlateForOnePlus-Thin.ttf</font>
         <font weight="300" style="italic">RobotoCondensed-LightItalic.ttf</font>
-        <font weight="400" style="normal">Roboto-Book.ttf</font>
+        <font weight="400" style="normal">SlateForOnePlus-Book.ttf</font>
         <font weight="400" style="italic">RobotoCondensed-Italic.ttf</font>
-        <font weight="500" style="normal">Roboto-Regular.ttf</font>
+        <font weight="500" style="normal">SlateForOnePlus-Regular.ttf</font>
         <font weight="500" style="italic">RobotoCondensed-MediumItalic.ttf</font>
-        <font weight="700" style="normal">Roboto-Bold.ttf</font>
+        <font weight="700" style="normal">SlateForOnePlus-Bold.ttf</font>
         <font weight="700" style="italic">RobotoCondensed-BoldItalic.ttf</font>
     </family>
     <alias name="sans-serif-condensed-light" to="sans-serif-condensed" weight="300" />
     <alias name="sans-serif-condensed-medium" to="sans-serif-condensed" weight="500" />
+
+    <family name="sans-serif-origin">
+        <font weight="100" style="normal" fallbackFor="sans-serif">Roboto-Thin.ttf</font>
+        <font weight="200" style="normal" fallbackFor="sans-serif">Roboto-Light.ttf</font>
+        <font weight="300" style="normal" fallbackFor="sans-serif">Roboto-Light.ttf</font>
+        <font weight="400" style="normal" fallbackFor="sans-serif">Roboto-Regular.ttf</font>
+        <font weight="500" style="normal" fallbackFor="sans-serif">Roboto-Medium.ttf</font>
+        <font weight="600" style="normal" fallbackFor="sans-serif">Roboto-Medium.ttf</font>
+        <font weight="700" style="normal" fallbackFor="sans-serif">Roboto-Bold.ttf</font>
+        <font weight="800" style="normal" fallbackFor="sans-serif">Roboto-Bold.ttf</font>
+        <font weight="900" style="normal" fallbackFor="sans-serif">Roboto-Black.ttf</font>
+    </family>
+
+    <family name="sans-serif-origin-condensed">
+        <font weight="300" style="normal" fallbackFor="sans-serif-condensed">RobotoCondensed-Light.ttf</font>
+        <font weight="400" style="normal" fallbackFor="sans-serif-condensed">RobotoCondensed-Regular.ttf</font>
+        <font weight="500" style="normal" fallbackFor="sans-serif-condensed">RobotoCondensed-Medium.ttf</font>
+        <font weight="700" style="normal" fallbackFor="sans-serif-condensed">RobotoCondensed-Bold.ttf</font>
+    </family>
 
     <family name="serif">
         <font weight="400" style="normal">NotoSerif-Regular.ttf</font>
