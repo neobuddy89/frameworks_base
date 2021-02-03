@@ -46,4 +46,7 @@
     <!-- Title of statusbar tuner -->
     <string name="status_bar_icons">Status bar icons</string>
 
+    <!-- Scrolling Screenshot string -->
+    <string name="scrollss">Scroll</string>
+
 </resources>
