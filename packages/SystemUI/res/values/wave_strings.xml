@@ -49,4 +49,7 @@
     <!-- Scrolling Screenshot string -->
     <string name="scrollss">Scroll</string>
 
+    <!-- Data usage info -->
+    <string name="usage_data">used</string>
+
 </resources>
