@@ -49,4 +49,7 @@
 
     <!-- Vendor platform signatures -->
     <java-symbol type="array" name="config_vendorPlatformSignatures" />
+
+    <!-- Screen recorder framerate limit -->
+    <java-symbol type="integer" name="config_screenRecorderMaxFramerate" />
 </resources>
