@@ -58,7 +58,7 @@ public class RebootTile extends QSTileImpl<BooleanState> {
             public void run() {
                 PowerManager pm =
                     (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
-                pm.reboot(mRebootToRecovery ? "recovery" : "");
+                pm.rebootCustom(mRebootToRecovery ? "recovery" : "");
             }
         }, 500);
     }
