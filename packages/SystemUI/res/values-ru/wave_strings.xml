@@ -45,5 +45,56 @@
 
     <!-- Title of statusbar tuner -->
     <string name="status_bar_icons">Значки в строке состояния</string>
+     
+    <!-- Scrolling Screenshot string -->
+    <string name="scrollss">Прокрутка</string>
+
+    <!-- Data usage info -->
+    <string name="usage_data">использовано</string>
+
+    <!-- Screenrecorder -->
+    <string name="screenrecord_stopdot_label">Показывать кнопку остановки\nУдерживайте для перемещения</string>
+    <string name="screenrecord_lowquality_label">Низкое качество для меньшего ращмера файла</string>
+
+    <!-- Name of the camera status bar icon. -->
+    <string name="status_bar_camera">Камера</string>
+    <!-- Name of the location status bar icon. -->
+    <string name="status_bar_location">Местоположение</string>
+    <!-- Name of the microphone status bar icon. -->
+    <string name="status_bar_microphone">Микрофон</string>
+
+    <!-- Heads Up QS Tile -->
+    <string name="quick_settings_heads_up_label">Всплывающие уведомления</string>
+    <string name="accessibility_quick_settings_heads_up_off">Всплывающие уведомления отключены.</string>
+    <string name="accessibility_quick_settings_heads_up_on">Всплывающие уведомления включены.</string>
+    <string name="accessibility_quick_settings_heads_up_changed_off">Всплывающие уведомления отключены.</string>
+    <string name="accessibility_quick_settings_heads_up_changed_on">Всплывающие уведомления включены.</string>
+
+    <!-- USB tethering QS tile -->
+    <string name="quick_settings_usb_tether_label">Точка доступа USB</string>
+
+    <!-- Screenshot QS tile -->
+    <string name="quick_settings_screenshot_label">Снимок экрана</string>
+    <string name="quick_settings_region_screenshot_label">Снимок выбранной области экрана</string>
+
+    <!-- Sound QS Tile -->
+    <string name="quick_settings_sound_label">Звук</string>
+    <string name="quick_settings_sound_ring">Рингтон</string>
+    <string name="quick_settings_sound_vibrate">Только вибрация</string>
+    <string name="quick_settings_sound_mute">Не беспокоить</string>
+
+    <!-- Reboot/Recovery QS tile -->
+    <string name="quick_settings_reboot_label">Перезагрузка</string>
+    <string name="quick_settings_reboot_recovery_label">Рекавери</string>
+
+    <!-- Headphones Buddy -->
+    <string name="hp_buddy">Баланс звука в наушниках</string>
+    <string name="hp_buddy_left">Левый канал</string>
+    <string name="hp_buddy_right">Правый канал</string>
+    <string name="hp_buddy_center">Оба канала</string>
+    <string name="hp_buddy_not_connected">Подключите наушники</string>
+
+    <!-- Name of the VPN status bar icon. -->
+    <string name="status_bar_vpn">VPN</string>
 
 </resources>
