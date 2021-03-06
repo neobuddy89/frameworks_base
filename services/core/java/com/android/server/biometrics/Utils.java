@@ -43,7 +43,11 @@ import android.util.Slog;
 import com.android.internal.R;
 import com.android.internal.widget.LockPatternUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import com.android.server.biometrics.face.CustomFaceService;
 
 public class Utils {
     private static final String TAG = "BiometricUtils";
@@ -326,5 +330,15 @@ public class Utils {
         return context.getResources().getBoolean(com.android.internal.R.bool.config_powerButtonFingerprint)
                    && (Settings.Secure.getIntForUser(context.getContentResolver(),
                         Settings.Secure.FINGERPRINT_POWER_BUTTON_PRESS, 0, UserHandle.USER_CURRENT) == 1);
+    }
+
+    public static String[] getConfiguration(Context context) {
+        ArrayList<String> sensors = new ArrayList();
+        Collections.addAll(sensors, context.getResources().getStringArray(
+            R.array.config_biometric_sensors));
+        if (CustomFaceService.isSupported()){
+            Collections.addAll(sensors, CustomFaceService.getConfiguration());
+        }
+        return sensors.toArray(new String[0]);
     }
 }
