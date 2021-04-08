@@ -411,11 +411,6 @@ public class BatteryMeterView extends LinearLayout implements
             ? (" " + bolt) : "";
         batteryPercentViewSetText(NumberFormat.getPercentInstance().format(mLevel / 100f)
             + mChargeIndicator);
-        if (mLevel == 100) {
-            mBatteryPercentView.setPaddingRelative(-5, 0, 10, 0);
-        } else {
-            mBatteryPercentView.setPaddingRelative(0, 0, 10, 0);
-        }
         setContentDescription(
                 getContext().getString(mCharging ? R.string.accessibility_battery_level_charging
                         : R.string.accessibility_battery_level, mLevel));
@@ -447,9 +442,8 @@ public class BatteryMeterView extends LinearLayout implements
                 mBatteryPercentView.setPaddingRelative(0, 0, 0, 0);
             } else {
                 Resources res = getContext().getResources();
-                mBatteryPercentView.setPaddingRelative(mLevel == 100 ? -5 : 0,
-                        0, res.getDimensionPixelSize(
-                               R.dimen.battery_level_padding_end), 0);
+                mBatteryPercentView.setPaddingRelative(mLevel == 100 ? -5 : 0, 0,
+                        res.getDimensionPixelSize(R.dimen.battery_level_padding_end), 0);
             }
         } else {
             if (showing) {
