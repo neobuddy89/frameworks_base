@@ -5,14 +5,16 @@ import static com.android.systemui.statusbar.StatusBarIconView.STATE_HIDDEN;
 import static com.android.systemui.statusbar.StatusBarIconView.STATE_ICON;
 
 import android.content.Context;
+import android.content.ContentResolver;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.android.systemui.Dependency;
-import com.android.systemui.R;
 import com.android.systemui.plugins.DarkIconDispatcher;
 import com.android.systemui.plugins.DarkIconDispatcher.DarkReceiver;
 import com.android.systemui.statusbar.StatusIconDisplayable;
@@ -62,7 +64,9 @@ public class NetworkTrafficSB extends NetworkTraffic implements DarkReceiver, St
     @Override
     protected void setMode() {
         super.setMode();
-        mIsEnabled = mIsEnabled && shouldShowOnSB(mContext);
+        mIsEnabled = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.NETWORK_TRAFFIC_SB_STATE, 0,
+                UserHandle.USER_CURRENT) == 1;
     }
 
     @Override
@@ -173,16 +177,4 @@ public class NetworkTrafficSB extends NetworkTraffic implements DarkReceiver, St
         }
     }
 
-    private static boolean shouldShowOnSB(Context context) {
-        if (context.getResources().getBoolean(R.bool.config_forceShowNetworkTrafficOnStatusBar))
-            return true;
-
-        int cutoutResId = context.getResources().getIdentifier("config_mainBuiltInDisplayCutout",
-                "string", "android");
-        if (cutoutResId > 0) {
-            return context.getResources().getString(cutoutResId).equals("");
-        }
-
-        return true;
-    }
 }

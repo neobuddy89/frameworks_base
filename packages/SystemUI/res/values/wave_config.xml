@@ -28,9 +28,6 @@
     <color name="config_fodColor">#00ff00</color>
     <color name="config_fodColorBackground">#20000000</color>
 
-    <!-- Show the network traffic monitor on statusbar even if the device has a notch -->
-    <bool name="config_forceShowNetworkTrafficOnStatusBar">false</bool>
-
     <!-- Burn-in protection -->
     <bool name="config_statusBarBurnInProtection">false</bool>
     <integer name="config_shift_interval">60</integer>
