@@ -53,9 +53,6 @@
     <!-- Screen recorder framerate limit -->
     <java-symbol type="integer" name="config_screenRecorderMaxFramerate" />
 
-    <!-- Enable face auth when swiping security view -->
-    <java-symbol type="bool" name="config_faceAuthOnSecurityView" />
-
     <!-- Pocket Lock -->
     <java-symbol type="layout" name="pocket_lock_view" />
 

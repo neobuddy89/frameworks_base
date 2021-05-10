@@ -54,9 +54,6 @@
     <!-- If not zero, limits the internal screen recorder's framerate to the set value. -->
     <integer name="config_screenRecorderMaxFramerate">0</integer>
 
-    <!-- Enable face auth when swiping security view -->
-    <bool name="config_faceAuthOnSecurityView">false</bool>
-
     <!-- Defines the sysfs attribute path used by pocket bridge to communicate pocket state to the pocket judge kernel driver. -->
     <string name="config_pocketBridgeSysfsInpocket" translatable="false"></string>
 
