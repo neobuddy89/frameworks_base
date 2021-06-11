@@ -38,4 +38,7 @@
     <!-- Whether usage of the proximity sensor during doze is supported -->
     <bool name="doze_proximity_sensor_supported">true</bool>
 
+    <!-- Whether to invert the sim slots for VoLTE/VoWiFi icon -->
+    <bool name="config_invertImsSlots">false</bool>
+
 </resources>
