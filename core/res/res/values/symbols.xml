@@ -1259,6 +1259,7 @@
   <java-symbol type="array" name="vendor_cross_profile_apps" />
 
   <java-symbol type="drawable" name="default_wallpaper" />
+  <java-symbol type="drawable" name="default_wallpaper_dark" />
   <java-symbol type="drawable" name="default_lock_wallpaper" />
   <java-symbol type="drawable" name="indicator_input_error" />
   <java-symbol type="drawable" name="ic_file_copy" />

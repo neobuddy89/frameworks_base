@@ -1981,6 +1981,9 @@ public class WallpaperManager {
     public static InputStream openDefaultWallpaper(Context context, @SetWallpaperFlags int which) {
         final String whichProp;
         final int defaultResId;
+        Configuration configuration = context.getResources().getConfiguration();
+        boolean nightMode = (configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK)
+                == Configuration.UI_MODE_NIGHT_YES;
         if (which == FLAG_LOCK) {
             /* Factory-default lock wallpapers are not yet supported
             whichProp = PROP_LOCK_WALLPAPER;
@@ -1989,7 +1992,8 @@ public class WallpaperManager {
             return null;
         } else {
             whichProp = PROP_WALLPAPER;
-            defaultResId = com.android.internal.R.drawable.default_wallpaper;
+            defaultResId = nightMode ? com.android.internal.R.drawable.default_wallpaper_dark
+                    : com.android.internal.R.drawable.default_wallpaper;
         }
         final String path = SystemProperties.get(whichProp);
         if (!TextUtils.isEmpty(path)) {
